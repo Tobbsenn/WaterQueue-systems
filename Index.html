@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MVSK – Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0B1E3D;--navy-mid:#162F5A;--blue:#1A73E8;--blue-l:#4DA3FF;--aqua:#00C9B1;
+  --sky:#EBF4FD;--sky-m:#C8E2F8;--white:#fff;--bg:#F4F7FB;
+  --txt:#0D1B2A;--txt-m:#3D5166;--txt-s:#7B95AE;--bdr:#D6E6F5;
+  --gold:#F5A623;--red:#E8445A;--green:#1EC87A;--purple:#7C3AED;
+  --sw:262px;--r:14px;--rs:9px;
+  --sh:0 2px 12px rgba(11,30,61,.07);--shm:0 4px 24px rgba(11,30,61,.13);--t:.18s ease;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);display:flex;min-height:100vh;overflow-x:hidden;font-size:14px}
+
+/* SIDEBAR */
+.sb{width:var(--sw);min-height:100vh;background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;transition:transform var(--t)}
+.sb-brand{padding:20px 18px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;text-decoration:none;cursor:pointer}
+.sb-ico{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--aqua));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;flex-shrink:0}
+.sb-brand-t strong{display:block;font-size:13px;font-weight:700;color:#fff}
+.sb-brand-t span{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase}
+.sb-user{padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.sb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue-l),var(--aqua));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.sb-un{color:rgba(255,255,255,.9);font-size:12.5px;font-weight:600;display:block;line-height:1.3;cursor:pointer}
+.sb-un:hover{color:#fff}
+.sb-ul{font-size:11px;color:rgba(255,255,255,.38);display:block;cursor:pointer;transition:color var(--t)}
+.sb-ul:hover{color:var(--red)}
+.sb-nav{flex:1;padding:12px 0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.08) transparent}
+.sb-sec{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:10px 18px 4px}
+.na{display:flex;align-items:center;gap:10px;padding:9px 18px;margin:1px 8px;border-radius:var(--rs);color:rgba(255,255,255,.6);text-decoration:none;font-size:13.5px;font-weight:400;transition:all var(--t);cursor:pointer;position:relative;user-select:none}
+.na i{width:16px;text-align:center;font-size:14px;flex-shrink:0}
+.na:hover{background:rgba(255,255,255,.07);color:#fff}
+.na.active{background:rgba(26,115,232,.22);color:#fff;font-weight:600}
+.na.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--blue-l);border-radius:0 3px 3px 0}
+.na.highlight{background:rgba(0,201,177,.12);color:rgba(255,255,255,.9);border:1px solid rgba(0,201,177,.25)}
+.na.highlight:hover{background:rgba(0,201,177,.22);color:#fff}
+.nb{margin-left:auto;background:var(--gold);color:#fff;font-size:9.5px;font-weight:800;padding:1px 6px;border-radius:20px;min-width:18px;text-align:center}
+.nb.bl{background:var(--blue)}
+.nb.gr{background:var(--green)}
+.ndiv{height:1px;background:rgba(255,255,255,.06);margin:8px 18px}
+.sb-foot{padding:12px 18px;border-top:1px solid rgba(255,255,255,.07);font-size:11px;color:rgba(255,255,255,.22);display:flex;justify-content:space-between}
+.sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:199}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* TOPBAR */
+.top{height:60px;background:var(--white);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:100}
+.top-toggle{display:none;width:34px;height:34px;border-radius:var(--rs);background:none;border:1px solid var(--bdr);cursor:pointer;align-items:center;justify-content:center;color:var(--txt-m);font-size:16px}
+.qp{display:flex;align-items:center;gap:7px;background:var(--sky);border:1px solid var(--sky-m);border-radius:30px;padding:5px 13px 5px 8px;font-size:12.5px;font-weight:600;color:var(--navy-mid);cursor:pointer;transition:all var(--t);user-select:none;white-space:nowrap}
+.qp:hover{background:var(--sky-m)}
+.qdot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+.qdot.b{background:var(--gold)}
+.qdot.e{background:var(--txt-s)}
+.top-mid{flex:1}
+.top-r{display:flex;align-items:center;gap:8px}
+.tb{width:36px;height:36px;border-radius:var(--rs);background:none;border:1px solid var(--bdr);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt-m);font-size:15px;transition:all var(--t);text-decoration:none;position:relative}
+.tb:hover{background:var(--sky);border-color:var(--sky-m);color:var(--navy)}
+.tbad{position:absolute;top:-5px;right:-5px;background:var(--gold);color:#fff;font-size:8.5px;font-weight:800;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* CONTENT */
+.cnt{padding:24px;flex:1}
+.ph{margin-bottom:22px}
+.ph h1{font-size:22px;font-weight:800;color:var(--txt)}
+.ph p{font-size:13px;color:var(--txt-s);margin-top:3px}
+.bc{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txt-s);margin-bottom:8px}
+.bc strong{color:var(--blue);cursor:pointer;font-weight:600}
+.bc strong:hover{text-decoration:underline}
+
+/* STAT CARDS */
+.sr{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:22px}
+.sc{background:var(--white);border:1px solid var(--bdr);border-radius:var(--r);padding:18px;box-shadow:var(--sh);transition:transform var(--t),box-shadow var(--t);animation:fu .35s ease both}
+.sc:hover{transform:translateY(-2px);box-shadow:var(--shm)}
+.sc.ab{border-top:3px solid var(--blue)}.sc.aa{border-top:3px solid var(--aqua)}.sc.ag{border-top:3px solid var(--gold)}.sc.an{border-top:3px solid var(--green)}
+.sch{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sci{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.sci.bl{background:rgba(26,115,232,.1);color:var(--blue)}.sci.aq{background:rgba(0,201,177,.1);color:var(--aqua)}.sci.go{background:rgba(245,166,35,.1);color:var(--gold)}.sci.gr{background:rgba(30,200,122,.1);color:var(--green)}
+.scl{font-size:11px;font-weight:600;color:var(--txt-s);text-transform:uppercase;letter-spacing:.06em}
+.scv{font-size:26px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;margin-bottom:3px}
+.scs{font-size:12px;color:var(--txt-s)}
+.scs .up{color:var(--green);font-weight:600}.scs .dn{color:var(--red);font-weight:600}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;animation:fu .35s ease both}
+.ch{padding:15px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.ct{font-size:14px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:8px}
+.ct i{color:var(--blue);font-size:14px}
+.cb{padding:20px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:20px}
+.cs2{grid-column:span 2}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;border:none;transition:all var(--t);text-decoration:none;line-height:1;user-select:none}
+.bp{background:var(--blue);color:#fff}.bp:hover{background:#0D5CC5;transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,115,232,.35)}.bp:active{transform:translateY(0);box-shadow:none}
+.bo{background:none;color:var(--txt-m);border:1.5px solid var(--bdr)}.bo:hover{border-color:var(--blue);color:var(--blue);background:var(--sky)}
+.br{background:var(--red);color:#fff}.br:hover{background:#c73048;transform:translateY(-1px)}
+.bg{background:var(--green);color:#fff}.bg:hover{background:#16a865;transform:translateY(-1px)}
+.baq{background:var(--aqua);color:#fff}.baq:hover{background:#00a892;transform:translateY(-1px)}
+.bfu{width:100%;justify-content:center}
+.bsm{padding:6px 12px;font-size:12px}
+.bda{background:rgba(232,68,90,.1);color:var(--red);border:1.5px solid rgba(232,68,90,.25)}.bda:hover{background:var(--red);color:#fff}
+
+/* FORMS */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fg label{font-size:12.5px;font-weight:600;color:var(--txt-m)}
+.fg input,.fg textarea,.fg select{border:1.5px solid var(--bdr);border-radius:var(--rs);padding:9px 13px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--txt);background:var(--white);transition:border-color var(--t);outline:none}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--blue)}
+.fg select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%237B95AE' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:20px;cursor:pointer}
+.ig{display:flex;border:1.5px solid var(--bdr);border-radius:var(--rs);overflow:hidden;transition:border-color var(--t)}
+.ig:focus-within{border-color:var(--blue)}
+.ig input{flex:1;border:none;outline:none;padding:9px 13px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--txt)}
+.ig .unit{padding:9px 13px;background:var(--sky);color:var(--txt-s);font-size:13px;font-weight:600;border-left:1.5px solid var(--bdr)}
+.hint{font-size:12px;color:var(--txt-s);margin:-8px 0 10px;display:flex;align-items:center;gap:5px}
+
+/* QUEUE */
+.ql{display:flex;flex-direction:column;gap:0}
+.qi{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(214,230,245,.5)}
+.qi:last-child{border-bottom:none}
+.qpos{width:28px;height:28px;border-radius:50%;background:var(--sky);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--txt-m);flex-shrink:0}
+.qpos.me{background:var(--blue);color:#fff}
+.qn{flex:1;font-size:14px;font-weight:500}
+.qd{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:700}
+.qd.s{background:rgba(26,115,232,.1);color:var(--blue)}.qd.t{background:rgba(124,58,237,.1);color:var(--purple)}.qd.h{background:rgba(245,166,35,.1);color:var(--gold)}.qd.w{background:rgba(0,201,177,.1);color:var(--aqua)}.qd.a{background:var(--sky);color:var(--txt-s)}
+.qe{text-align:center;padding:28px 20px;color:var(--txt-s);font-size:13.5px}
+.qe i{font-size:32px;display:block;margin-bottom:8px;opacity:.25}
+
+/* LAKE BUTTONS */
+.lgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.lbtn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 8px;border:1.5px solid var(--bdr);border-radius:var(--r);background:none;cursor:pointer;font-family:'Outfit',sans-serif;transition:all var(--t);text-align:center;position:relative}
+.lbtn i{font-size:24px;color:var(--txt-s);transition:color var(--t)}
+.lbtn strong{font-size:13px;font-weight:700;color:var(--txt-m)}
+.lbtn small{font-size:11px;color:var(--txt-s)}
+.lbtn:hover,.lbtn.me{border-color:var(--blue);background:var(--sky)}.lbtn:hover i,.lbtn.me i{color:var(--blue)}
+.lbtn.cab:hover,.lbtn.cab.me{border-color:var(--aqua);background:rgba(0,201,177,.06)}.lbtn.cab:hover i,.lbtn.cab.me i{color:var(--aqua)}
+.lon{position:absolute;top:-8px;right:-6px;background:var(--green);color:#fff;font-size:10px;font-weight:800;padding:1px 7px;border-radius:20px}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--txt-s);padding:8px 12px;text-align:left;border-bottom:1.5px solid var(--bdr)}
+.tbl td{padding:10px 12px;font-size:13.5px;border-bottom:1px solid rgba(214,230,245,.4)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .num{font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;font-weight:500}
+.tbl .num.hi{color:var(--blue);font-weight:700}
+.tbl .tot td{font-weight:700;background:var(--sky)}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}
+.pill.ok{background:rgba(30,200,122,.12);color:var(--green)}.pill.pe{background:rgba(245,166,35,.12);color:var(--gold)}.pill.no{background:rgba(232,68,90,.1);color:var(--red)}
+
+/* FACT LIST */
+.fl{display:flex;flex-direction:column}
+.fi{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(214,230,245,.4)}
+.fi:last-child{border-bottom:none}
+.fic{width:30px;height:30px;border-radius:8px;background:var(--sky);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--blue);flex-shrink:0}
+.flb{flex:1;font-size:13px;color:var(--txt-s)}
+.fv{font-size:13px;font-weight:700}
+.fv a{color:var(--blue);text-decoration:none;font-weight:600}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--bdr);margin-bottom:20px}
+.tab{padding:10px 18px;font-size:13.5px;font-weight:500;color:var(--txt-s);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all var(--t);user-select:none}
+.tab:hover{color:var(--txt)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:700}
+
+/* ACT */
+.ae{background:var(--white);border:1px solid var(--bdr);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;transition:all var(--t)}
+.ae:hover{border-color:var(--sky-m);box-shadow:var(--sh)}
+.adt{width:50px;height:50px;border-radius:12px;background:var(--sky);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.adt strong{font-size:17px;font-weight:800;color:var(--navy-mid);line-height:1}
+.adt span{font-size:10px;color:var(--txt-s);text-transform:uppercase;font-weight:600}
+.ai{flex:1}
+.adn{font-size:14px;font-weight:700}
+.adm{font-size:12.5px;color:var(--txt-s);margin-top:2px}
+.avl{text-align:right}
+.avl strong{font-size:13.5px;font-weight:700;color:var(--red);display:block}
+.avl span{font-size:11.5px;color:var(--txt-s)}
+.avl.comp strong{color:var(--green)}
+
+/* COMP CARD */
+.cc{background:var(--white);border:1.5px solid var(--bdr);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.cc:last-child{margin-bottom:0}
+.cc.reg{border-left:4px solid var(--green)}
+.ccn{font-size:15px;font-weight:700}
+.ccd{font-size:12px;color:var(--txt-s);margin-top:3px;display:flex;align-items:center;gap:5px}
+.ccm{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.ccm span{font-size:11.5px;color:var(--txt-m);background:var(--sky);padding:3px 9px;border-radius:4px;display:flex;align-items:center;gap:4px}
+
+/* CHART */
+.cw{position:relative;height:220px}
+
+/* SETTINGS */
+.sr2{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(214,230,245,.4)}
+.sr2:last-child{border-bottom:none}
+.sri strong{display:block;font-size:14px;font-weight:600}
+.sri span{font-size:12.5px;color:var(--txt-s)}
+.tog{width:44px;height:24px;border-radius:12px;background:var(--bdr);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;border:none}
+.tog.on{background:var(--blue)}
+.tog::after{content:'';width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.tog.on::after{left:23px}
+
+/* QUICK LINKS */
+.qlk{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1.5px solid var(--bdr);border-radius:var(--rs);color:var(--txt-m);font-size:13.5px;font-weight:500;cursor:pointer;transition:all var(--t);margin-bottom:8px;user-select:none}
+.qlk:last-child{margin-bottom:0}
+.qlk:hover{border-color:var(--blue);color:var(--blue);background:var(--sky)}
+.qlk i{font-size:15px;width:18px;text-align:center}
+.qlk .arr{margin-left:auto;font-size:12px;opacity:.4}
+
+/* RESERVED BANNER */
+.res-banner{background:linear-gradient(135deg,var(--aqua),var(--blue));border-radius:var(--r);padding:20px 22px;margin-bottom:20px;display:flex;align-items:center;gap:16px;color:#fff;cursor:pointer;transition:opacity var(--t)}
+.res-banner:hover{opacity:.92}
+.res-banner i{font-size:32px;flex-shrink:0}
+.res-banner h3{font-size:16px;font-weight:800;margin-bottom:2px}
+.res-banner p{font-size:13px;opacity:.85}
+.res-banner .arr{margin-left:auto;font-size:22px;opacity:.7;flex-shrink:0}
+
+/* CALENDAR */
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cdh{font-size:11px;font-weight:700;color:var(--txt-s);padding:6px 0;text-transform:uppercase}
+.cd{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:var(--rs);font-size:13.5px;cursor:pointer;transition:all var(--t);border:1.5px solid transparent}
+.cd:hover{background:var(--sky);border-color:var(--sky-m)}
+.cd.today{background:var(--blue);color:#fff;font-weight:800}
+.cd.has{background:rgba(0,201,177,.12);border-color:var(--aqua);font-weight:600}
+.cd.emp{opacity:0;pointer-events:none}
+.cn{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cn h3{font-size:16px;font-weight:800}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;padding:12px 20px;border-radius:var(--r);font-size:13.5px;font-weight:600;z-index:9999;display:flex;align-items:center;gap:9px;box-shadow:var(--shm);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-left:4px solid var(--green)}.toast.err{border-left:4px solid var(--red)}.toast.info{border-left:4px solid var(--blue)}
+
+/* ANIMS */
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sc:nth-child(1){animation-delay:.04s}.sc:nth-child(2){animation-delay:.09s}.sc:nth-child(3){animation-delay:.14s}.sc:nth-child(4){animation-delay:.19s}
+
+footer{padding:16px 24px;font-size:11.5px;color:var(--txt-s);border-top:1px solid var(--bdr);background:var(--white);margin-top:auto}
+
+@media(max-width:768px){
+  .sb{transform:translateX(-100%)}.sb.open{transform:translateX(0)}.sb-ov.show{display:block}
+  .main{margin-left:0}.g2,.g3{grid-template-columns:1fr}.cs2{grid-column:span 1}
+  .top-toggle{display:flex}.cnt{padding:14px}.sr{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){.sr{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sb" id="sb">
+  <div class="sb-brand" onclick="go('dashboard')">
+    <div class="sb-ico"><i class="fa-solid fa-water"></i></div>
+    <div class="sb-brand-t"><strong>Moelv VS</strong><span>Vannskiklubb</span></div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-av">TJ</div>
+    <div>
+      <span class="sb-un" onclick="go('konto')">Tobias S. Jacobsen</span>
+      <span class="sb-ul" onclick="go('loggut')"><i class="fa-solid fa-arrow-right-from-bracket" style="font-size:10px;margin-right:3px"></i>Logg ut</span>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sec">Hjem</div>
+    <div class="na" onclick="go('dashboard')" id="nav-dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</div>
+    <div class="na" onclick="go('kalender')" id="nav-kalender"><i class="fa-regular fa-calendar"></i> Aktivitetskalender</div>
+    <div class="ndiv"></div>
+    <div class="sb-sec">Kjøreliste</div>
+    <div class="na" onclick="go('kjoreliste-velg')" id="nav-kjoreliste-velg"><i class="fa-solid fa-list-ol"></i> Sett deg på kjøreliste</div>
+    <div class="na" onclick="go('kjoreliste',{sjo:1})" id="nav-kjoreliste-1"><i class="fa-solid fa-water"></i> Sjø 1 <span class="nb" id="b1">0</span></div>
+    <div class="na" onclick="go('kjoreliste',{sjo:2})" id="nav-kjoreliste-2"><i class="fa-solid fa-water"></i> Sjø 2 <span class="nb" id="b2">0</span></div>
+    <div class="na" onclick="go('kjoreliste',{sjo:3})" id="nav-kjoreliste-3"><i class="fa-solid fa-cable-car"></i> Sjø 3 – Kabel <span class="nb" id="b3">0</span></div>
+    <div class="ndiv"></div>
+    <div class="sb-sec">Min konto</div>
+    <div class="na" onclick="go('aktivitet')" id="nav-aktivitet"><i class="fa-solid fa-bolt"></i> Din aktivitet</div>
+    <div class="na" onclick="go('konto')" id="nav-konto"><i class="fa-regular fa-user"></i> Din kontoside</div>
+    <div class="na" onclick="go('innstillinger')" id="nav-innstillinger"><i class="fa-solid fa-gear"></i> Dine innstillinger</div>
+    <div class="na" onclick="go('stripe')" id="nav-stripe"><i class="fa-solid fa-coins"></i> Overfør penger</div>
+    <div class="na" onclick="go('verdikupong')" id="nav-verdikupong"><i class="fa-solid fa-ticket"></i> Verdikupong</div>
+    <div class="na" onclick="go('kontologg')" id="nav-kontologg"><i class="fa-solid fa-clock-rotate-left"></i> Kontologg</div>
+    <div class="ndiv"></div>
+    <div class="sb-sec">Mer</div>
+    <div class="na" onclick="go('konkurranser')" id="nav-konkurranser"><i class="fa-solid fa-trophy"></i> Konkurranser</div>
+    <div class="na" onclick="go('mine-res')" id="nav-mine-res"><i class="fa-regular fa-bookmark"></i> Mine reservasjoner</div>
+    <div class="na" onclick="go('reserver')" id="nav-reserver"><i class="fa-solid fa-door-open"></i> Reserver tid</div>
+    <div class="na" onclick="go('rapporter')" id="nav-rapporter"><i class="fa-solid fa-chart-bar"></i> Rapporter</div>
+    <div class="na" onclick="go('feedback')" id="nav-feedback"><i class="fa-regular fa-comment"></i> Tilbakemelding</div>
+    <div class="ndiv"></div>
+    <div class="na highlight" onclick="window.open('MVSK_batkjorer.html','_blank')">
+      <i class="fa-solid fa-ship"></i> Båtkjørerside <span class="nb gr">NY</span>
+    </div>
+  </nav>
+  <div class="sb-foot"><span>WaterskiQueue</span><span>v0.1.7</span></div>
+</aside>
+<div class="sb-ov" id="sbOv" onclick="closeSb()"></div>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="top">
+    <button class="top-toggle" onclick="openSb()"><i class="fa-solid fa-bars"></i></button>
+    <div class="qp" onclick="go('kjoreliste',{sjo:1})" id="pill1"><span class="qdot e" id="dot1"></span><span id="pt1">Sjø 1 · 0</span></div>
+    <div class="qp" onclick="go('kjoreliste',{sjo:2})" id="pill2"><span class="qdot e" id="dot2"></span><span id="pt2">Sjø 2 · 0</span></div>
+    <div class="qp" onclick="go('kjoreliste',{sjo:3})" id="pill3"><span class="qdot e" id="dot3"></span><span id="pt3">Sjø 3 · 0</span></div>
+    <div class="top-mid"></div>
+    <div class="top-r">
+      <div class="tb" onclick="window.open('MVSK_batkjorer.html','_blank')" title="Båtkjørerside" style="border-color:rgba(0,201,177,.4);color:var(--aqua)"><i class="fa-solid fa-ship"></i></div>
+      <div class="tb" onclick="go('stripe')" title="Fyll på"><i class="fa-solid fa-coins"></i></div>
+      <div class="tb" onclick="go('konkurranser')" title="Konkurranser" style="position:relative"><i class="fa-solid fa-trophy"></i><span class="tbad" id="compBadge">1</span></div>
+      <div class="tb" onclick="go('konto')" title="Konto"><i class="fa-regular fa-circle-user"></i></div>
+    </div>
+  </header>
+
+  <div class="cnt" id="app"></div>
+  <footer>Copyright © 2036–2026 <strong>TSJQueue system / Moelv Vannskiklubb</strong> · </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── LOCALSTORAGE SHARED STATE ── */
+const LS='MVSK_data';
+function getLS(){try{return JSON.parse(localStorage.getItem(LS))||defLS()}catch{return defLS()}}
+function defLS(){return{queues:{'1':[],'2':[],'3':[]},completedTrips:[]}}
+function setLS(d){localStorage.setItem(LS,JSON.stringify(d))}
+
+/* ── USER STATE (session only) ── */
+const U={
+  name:'Tobias S. Jacobsen',initials:'TJ',
+  balance:288,spent:583,lastAmt:110,
+  inQueue:{1:false,2:false,3:false},
+  myDisc:'',
+  trips:{2025:{slalom:2,hopp:0,wakeboard:0,trick:11,annet:0},2026:{slalom:2,hopp:0,wakeboard:0,trick:2,annet:0}},
+  transactions:[
+    {date:'01.05.2026',desc:'Trick — Sjø 1',amt:-110,bal:288},
+    {date:'28.04.2026',desc:'Fyll på konto (Stripe)',amt:400,bal:398},
+    {date:'20.04.2026',desc:'Slalom — Sjø 2',amt:-110,bal:-2},
+    {date:'18.04.2026',desc:'Trick — Sjø 1',amt:-110,bal:108},
+    {date:'10.04.2026',desc:'Slalom — Sjø 1',amt:-110,bal:218},
+    {date:'05.04.2026',desc:'Trick — Sjø 3',amt:-110,bal:328},
+    {date:'01.04.2026',desc:'Fyll på konto (Stripe)',amt:600,bal:438},
+  ],
+  competitions:[
+    {name:'MVSK Vårkonkurranse',date:'15.06.2026',loc:'Moelv',disc:'Slalom, Trick, Hopp',reg:false},
+    {name:'Norsk Mesterskap',date:'20.07.2026',loc:'Hamar',disc:'Slalom',reg:false},
+    {name:'Sommercup Hedmark',date:'03.08.2026',loc:'Stange',disc:'Alle grener',reg:true},
+  ],
+  reservations:[
+    {id:1,date:'20.05.2026',time:'16:00–18:00',res:'Sjø 1 + Båt',status:'confirmed'},
+    {id:2,date:'28.05.2026',time:'10:00–12:00',res:'Sjø 2 + Båt',status:'pending'},
+  ],
+  togSettings:{sms:true,push:false,news:true,queue_notify:true},
+  feedbackDone:false,
+  page:'dashboard',params:{},
+  lastLSVersion:0,
+};
+
+function total(yr){const t=U.trips[yr]||{};return(t.slalom||0)+(t.hopp||0)+(t.wakeboard||0)+(t.trick||0)+(t.annet||0)}
+function qLen(n){const d=getLS();return(d.queues[String(n)]||[]).length+(U.inQueue[n]?1:0)}
+function discPill(d){const m={Slalom:'s',Trick:'t',Hopp:'h',Wakeboard:'w'};return`<span class="qd ${m[d]||'a'}">${d||'Annet'}</span>`}
+function fmtDur(ms){if(!ms)return'–';const s=Math.floor(ms/1000);const m=Math.floor(s/60);const sec=s%60;return`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`}
+
+/* ── SIDEBAR / TOPBAR ── */
+function openSb(){document.getElementById('sb').classList.add('open');document.getElementById('sbOv').classList.add('show')}
+function closeSb(){document.getElementById('sb').classList.remove('open');document.getElementById('sbOv').classList.remove('show')}
+
+function updateBadges(){
+  [1,2,3].forEach(n=>{
+    const l=qLen(n);
+    const b=document.getElementById('b'+n);if(b)b.textContent=l;
+    const dt=document.getElementById('dot'+n);
+    if(dt)dt.className='qdot'+(l>2?' b':l>0?'':' e');
+    const pt=document.getElementById('pt'+n);
+    if(pt)pt.textContent=`Sjø ${n} · ${l}`;
+  });
+  const cb=document.getElementById('compBadge');
+  if(cb)cb.textContent=U.competitions.filter(c=>!c.reg).length||'';
+}
+
+/* ── ROUTER ── */
+function go(page,params={}){
+  U.page=page;U.params=params;
+  document.querySelectorAll('.na').forEach(a=>a.classList.remove('active'));
+  const key=page==='kjoreliste'?`kjoreliste-${params.sjo||1}`:page;
+  const el=document.getElementById('nav-'+key)||document.getElementById('nav-'+page);
+  if(el)el.classList.add('active');
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+  closeSb();
+}
+
+function render(){
+  const app=document.getElementById('app');
+  const p=U.page;
+  if(p==='dashboard')app.innerHTML=pgDash();
+  else if(p==='kjoreliste')app.innerHTML=pgQueue(U.params.sjo||1);
+  else if(p==='kjoreliste-velg')app.innerHTML=pgQueueVelg();
+  else if(p==='konto')app.innerHTML=pgKonto();
+  else if(p==='kontologg')app.innerHTML=pgKontologg();
+  else if(p==='aktivitet')app.innerHTML=pgAktivitet();
+  else if(p==='innstillinger')app.innerHTML=pgInnstillinger();
+  else if(p==='stripe')app.innerHTML=pgStripe();
+  else if(p==='verdikupong')app.innerHTML=pgVerdikupong();
+  else if(p==='kalender')app.innerHTML=pgKalender();
+  else if(p==='mine-res')app.innerHTML=pgMineRes();
+  else if(p==='reserver')app.innerHTML=pgReserver();
+  else if(p==='konkurranser')app.innerHTML=pgKonk();
+  else if(p==='rapporter')app.innerHTML=pgRapport();
+  else if(p==='feedback')app.innerHTML=pgFeedback();
+  else if(p==='loggut')app.innerHTML=pgLoggut();
+  else app.innerHTML=`<div class="ph"><h1>${p}</h1><p>Under utvikling.</p></div>`;
+  afterRender();
+  updateBadges();
+}
+
+function afterRender(){
+  const p=U.page;
+  if(p==='dashboard')setTimeout(initDashChart,50);
+  if(p==='rapporter')setTimeout(initRapCharts,50);
+}
+
+/* ── POLLING FOR LS CHANGES ── */
+setInterval(()=>{
+  const d=getLS();
+  const v=JSON.stringify(d);
+  if(v!==U._lastLSStr){
+    U._lastLSStr=v;
+    updateBadges();
+    // If viewing queue, refresh
+    if(U.page==='kjoreliste'||U.page==='kjoreliste-velg'||U.page==='dashboard'){
+      const app=document.getElementById('app');
+      if(app){
+        if(U.page==='dashboard')app.innerHTML=pgDash();
+        else if(U.page==='kjoreliste')app.innerHTML=pgQueue(U.params.sjo||1);
+        else app.innerHTML=pgQueueVelg();
+      }
+    }
+    // Merge new completed trips into activity
+    ingestCompletedTrips(d);
+  }
+},2000);
+
+function ingestCompletedTrips(d){
+  const trips=d.completedTrips||[];
+  trips.forEach(t=>{
+    if(!U.transactions.find(tx=>tx._id===t.id)){
+      U.transactions.unshift({_id:t.id,date:t.date,desc:`${t.disc} — Sjø ${t.sjø} (${t.driver})`,amt:-110,bal:U.balance-110,fromBoat:true});
+      U.balance-=110;U.spent+=110;
+      U.trips[2026][t.disc.toLowerCase()]=(U.trips[2026][t.disc.toLowerCase()]||0)+1;
+    }
+  });
+}
+
+/* ── TOAST ── */
+function toast(msg,type='ok',dur=2800){
+  const t=document.getElementById('toast');
+  t.innerHTML=`<i class="fa-solid fa-${type==='ok'?'check-circle':type==='err'?'circle-xmark':'info-circle'}"></i> ${msg}`;
+  t.className='toast '+type+' show';
+  clearTimeout(t._t);t._t=setTimeout(()=>{t.className='toast '+type;},dur);
+}
+
+/* ══════════════════════════════════════════
+   PAGES
+══════════════════════════════════════════ */
+
+/* ── DASHBOARD ── */
+function pgDash(){
+  const d=getLS();
+  const inQ=[1,2,3].filter(n=>U.inQueue[n]);
+  const recent=(d.completedTrips||[]).slice(0,3);
+  return`
+<div class="ph">
+  <h1>God dag, Tobias 👋</h1>
+  <p>Her er oversikten din — siden oppdateres automatisk</p>
+</div>
+${inQ.length?`<div style="background:rgba(0,201,177,.1);border:1.5px solid var(--aqua);border-radius:var(--r);padding:12px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;font-size:13.5px;color:var(--txt-m)"><i class="fa-solid fa-person-swimming" style="color:var(--aqua);font-size:20px"></i><span>Du er på køen: ${inQ.map(n=>'<strong>Sjø '+n+'</strong>').join(', ')} – Lykke til! 🌊</span></div>`:''}
+
+<!-- Boat driver banner -->
+<div class="res-banner" onclick="window.open('MVSK_batkjorer.html','_blank')">
+  <i class="fa-solid fa-ship"></i>
+  <div><h3>Båtkjørerside</h3><p>Kjører du båten i dag? Åpne kjørerpanelet med timeroppdatering og køstyring.</p></div>
+  <i class="fa-solid fa-arrow-right arr"></i>
+</div>
+
+<div class="sr">
+  <div class="sc ab"><div class="sch"><div class="scl">Tilgode</div><div class="sci bl"><i class="fa-solid fa-wallet"></i></div></div><div class="scv">${U.balance} kr</div><div class="scs">Siste tur: <span class="dn">−${U.lastAmt} kr</span></div></div>
+  <div class="sc aa"><div class="sch"><div class="scl">Turer i år</div><div class="sci aq"><i class="fa-solid fa-person-skiing-nordic"></i></div></div><div class="scv">${total(2026)}</div><div class="scs">Fjor: ${total(2025)} turer</div></div>
+  <div class="sc ag"><div class="sch"><div class="scl">Tid på vannet</div><div class="sci go"><i class="fa-solid fa-stopwatch"></i></div></div><div class="scv">37 min</div><div class="scs">Denne måneden</div></div>
+  <div class="sc an"><div class="sch"><div class="scl">Totalsum 2026</div><div class="sci gr"><i class="fa-solid fa-arrow-trend-up"></i></div></div><div class="scv">${U.spent} kr</div><div class="scs">Ca ${Math.floor(U.spent/110)} turer</div></div>
+</div>
+
+<div class="g3">
+  <!-- Fyll på -->
+  <div class="card">
+    <div class="ch"><div class="ct"><i class="fa-solid fa-credit-card"></i> Fyll på konto</div></div>
+    <div class="cb">
+      <div class="fg"><label>Beløp (min 100 kr)</label><div class="ig"><input type="number" id="fa" min="100" placeholder="200"><span class="unit">kr</span></div></div>
+      <p class="hint"><i class="fa-regular fa-id-card"></i> Ha BankID klar</p>
+      <button class="btn bp" onclick="doFill()"><i class="fa-solid fa-bolt"></i> Lad opp!</button>
+      <div style="margin-top:14px;display:flex;gap:7px">
+        <span style="background:var(--sky);border:1px solid var(--sky-m);border-radius:5px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--txt-m)">VISA</span>
+        <span style="background:var(--sky);border:1px solid var(--sky-m);border-radius:5px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--txt-m)">MC</span>
+        <span style="background:rgba(255,100,80,.1);border:1px solid rgba(255,100,80,.2);border-radius:5px;padding:4px 10px;font-size:11px;font-weight:700;color:#e04b30">Vipps</span>
+      </div>
+    </div>
+  </div>
+  <!-- Kjøreliste -->
+  <div class="card">
+    <div class="ch"><div class="ct"><i class="fa-solid fa-list-ol"></i> Sett deg på liste</div></div>
+    <div class="cb">
+      <div class="fg"><label>Gren</label>
+        <select id="dd"><option value="">-- Velg gren --</option><option>Slalom</option><option>Hopp</option><option>Trick</option><option>Wakeboard</option></select>
+      </div>
+      <div class="fg"><label>Sjø</label>
+        <div class="lgrid">
+          ${[1,2,3].map(n=>`<button class="lbtn${n===3?' cab':''}${U.inQueue[n]?' me':''}" onclick="joinQ(${n})">
+            ${U.inQueue[n]?'<span class="lon">✓</span>':''}
+            <i class="fa-solid fa-${n===3?'cable-car':'water'}"></i>
+            <strong>Sjø ${n}</strong>
+            <small>${n===3?'Kabel':'Båt'} · ${qLen(n)}</small>
+          </button>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Aktivitet -->
+  <div class="card">
+    <div class="ch"><div class="ct"><i class="fa-solid fa-circle-info"></i> Aktivitet</div></div>
+    <div class="cb" style="padding-top:6px;padding-bottom:6px">
+      <div class="fl">
+        <div class="fi"><div class="fic"><i class="fa-solid fa-flag-checkered"></i></div><div class="flb">Siste tur</div><div class="fv">01. mai 2026</div></div>
+        <div class="fi"><div class="fic"><i class="fa-solid fa-calendar-week"></i></div><div class="flb">Denne uken</div><div class="fv">0 sek</div></div>
+        <div class="fi"><div class="fic"><i class="fa-solid fa-calendar"></i></div><div class="flb">Denne måneden</div><div class="fv">15 min 13 sek</div></div>
+        <div class="fi"><div class="fic"><i class="fa-solid fa-calendar-days"></i></div><div class="flb">Totalt i år</div><div class="fv">37 min 9 sek</div></div>
+        <div class="fi"><div class="fic"><i class="fa-solid fa-book-open"></i></div><div class="flb">Treningsdagbok</div><div class="fv"><a onclick="go('aktivitet')" style="cursor:pointer">Skriv →</a></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+${recent.length?`
+<div class="card" style="margin-bottom:20px">
+  <div class="ch"><div class="ct"><i class="fa-solid fa-flag-checkered" style="color:var(--green)"></i> Nylig fullførte turer</div><span style="font-size:12px;color:var(--txt-s)">Fra båtkjørerside</span></div>
+  <div class="cb" style="padding-top:8px;padding-bottom:8px">
+    ${recent.map(t=>`<div class="ae">
+      <div class="adt"><strong>${t.date?.split('.')[0]||'–'}</strong><span>${t.date?.split('.')[1]==='05'?'MAI':t.date?.split('.')[1]||'–'}</span></div>
+      <div class="ai"><div class="adn">${t.name}</div><div class="adm">${t.disc} · Sjø ${t.sjø} · Sjåfør: ${t.driver}</div></div>
+      <div class="avl comp"><strong>+${fmtDur(t.durationMs)}</strong><span>varighet</span></div>
+    </div>`).join('')}
+  </div>
+</div>`:''}
+
+<div class="g2">
+  <div class="card cs2">
+    <div class="ch"><div class="ct"><i class="fa-solid fa-chart-line"></i> Turer per måned</div>
+      <div style="display:flex;gap:10px">
+        <span style="font-size:12px;color:var(--txt-s);display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--blue);display:inline-block"></span>2026</span>
+        <span style="font-size:12px;color:var(--txt-s);display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--bdr);display:inline-block"></span>2025</span>
+      </div>
+    </div>
+    <div class="cb"><div class="cw"><canvas id="dc"></canvas></div></div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ch"><div class="ct"><i class="fa-solid fa-table-list"></i> Turer per gren</div></div>
+    <div class="cb" style="padding:0">
+      <table class="tbl">
+        <thead><tr><th>Gren</th><th style="text-align:right">2025</th><th style="text-align:right">2026</th></tr></thead>
+        <tbody>
+          ${[['Slalom','person-skiing'],['Hopp','person-falling'],['Wakeboard','person-snowboarding'],['Trick','rotate'],['Annet','ellipsis']].map(([g,ic])=>`
+          <tr><td><i class="fa-solid fa-${ic}" style="margin-right:8px;color:var(--txt-s);font-size:12px"></i>${g}</td>
+          <td class="num">${U.trips[2025][g.toLowerCase()]||0}</td>
+          <td class="num hi">${U.trips[2026][g.toLowerCase()]||0}</td></tr>`).join('')}
+          <tr class="tot"><td><strong>Totalt</strong></td><td class="num">${total(2025)}</td><td class="num hi">${total(2026)}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct"><i class="fa-solid fa-rocket"></i> Hurtiglenker</div></div>
+    <div class="cb" style="padding:14px">
+      ${[['kalender','calendar','Aktivitetskalender'],['reserver','door-open','Reserver tid'],['konkurranser','trophy','Konkurranser'],['aktivitet','bolt','Din aktivitet'],['verdikupong','ticket','Verdikupong'],['feedback','comment','Tilbakemelding']].map(([p,i,l])=>`<div class="qlk" onclick="go('${p}')"><i class="fa-solid fa-${i}"></i>${l}<i class="fa-solid fa-arrow-right arr"></i></div>`).join('')}
+      <div class="qlk" onclick="window.open('MVSK_batkjorer.html','_blank')" style="border-color:rgba(0,201,177,.3);color:var(--aqua)"><i class="fa-solid fa-ship"></i>Båtkjørerside<i class="fa-solid fa-arrow-right arr"></i></div>
+    </div>
+  </div>
+</div>`;
+}
+
+function initDashChart(){
+  const c=document.getElementById('dc');if(!c||!window.Chart)return;
+  new Chart(c,{type:'bar',data:{labels:['April','Mai','Juni','Juli','Aug','Sep'],datasets:[{label:'2026',data:[2,total(2026)-2,0,0,0,0],backgroundColor:'rgba(26,115,232,.85)',borderRadius:6,borderSkipped:false},{label:'2025',data:[4,4,3,2,0,0],backgroundColor:'rgba(214,230,245,.9)',borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw} turer`}}},scales:{x:{grid:{display:false},ticks:{font:{family:'Outfit',size:11},color:'#7B95AE'}},y:{grid:{color:'rgba(214,230,245,.4)',drawTicks:false},ticks:{precision:0,font:{family:'Outfit',size:11},color:'#7B95AE'},border:{display:false}}}}});
+}
+
+function doFill(){
+  const v=parseInt(document.getElementById('fa')?.value||0);
+  if(!v||v<100){toast('Minimum beløp er 100 kr','err');return;}
+  U.balance+=v;U.spent+=v;
+  U.transactions.unshift({date:'14.05.2026',desc:'Fyll på konto (Stripe)',amt:v,bal:U.balance});
+  toast(`${v} kr lagt til! Ny saldo: ${U.balance} kr`,'ok');
+  render();
+}
+
+function joinQ(sjo){
+  const disc=document.getElementById('dd')?.value||'';
+  if(!disc){toast('Velg gren først!','err');return;}
+  if(U.inQueue[sjo]){
+    U.inQueue[sjo]=false;
+    // Remove from LS queue
+    const d=getLS();
+    d.queues[String(sjo)]=(d.queues[String(sjo)]||[]).filter(x=>!x.isMe);
+    setLS(d);
+    toast(`Fjernet fra Sjø ${sjo}`,'info');
+  } else {
+    if(U.balance<110){toast('For lav saldo – fyll på konto!','err');return;}
+    U.inQueue[sjo]=true;U.myDisc=disc;
+    // Add to LS queue
+    const d=getLS();
+    d.queues[String(sjo)]=d.queues[String(sjo)]||[];
+    d.queues[String(sjo)].push({id:`me_${Date.now()}`,name:U.name,disc,isMe:true,addedAt:new Date().toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit'})});
+    setLS(d);
+    toast(`Påmeldt Sjø ${sjo} – ${disc}! Du er nr ${qLen(sjo)}.`,'ok');
+  }
+  render();
+}
+
+/* ── QUEUE ── */
+function pgQueueVelg(){
+  const d=getLS();
+  return`<div class="ph"><h1>Kjørelistene</h1><p>Velg sjø</p></div>
+<div class="g3">${[1,2,3].map(n=>{const l=(d.queues[String(n)]||[]).length+(U.inQueue[n]?1:0);return`
+  <div class="card" style="cursor:pointer" onclick="go('kjoreliste',{sjo:${n}})">
+    <div class="cb" style="text-align:center;padding:28px 16px">
+      <i class="fa-solid fa-${n===3?'cable-car':'water'}" style="font-size:38px;color:${n===3?'var(--aqua)':'var(--blue)'};margin-bottom:12px;display:block"></i>
+      <div style="font-size:20px;font-weight:800;margin-bottom:4px">Sjø ${n}</div>
+      <div style="font-size:13px;color:var(--txt-s);margin-bottom:14px">${n===3?'Kabelanlegg':'Båt'}</div>
+      <div style="font-size:32px;font-weight:800;font-family:'JetBrains Mono',monospace;color:${n===3?'var(--aqua)':'var(--blue)'}">${l}</div>
+      <div style="font-size:12px;color:var(--txt-s)">på lista</div>
+      ${U.inQueue[n]?`<div style="margin-top:12px;background:rgba(30,200,122,.12);color:var(--green);padding:5px 12px;border-radius:var(--rs);font-size:12px;font-weight:700;display:inline-block"><i class="fa-solid fa-check" style="margin-right:4px"></i>Du er påmeldt</div>`:''}
+    </div>
+  </div>`;}).join('')}</div>`;
+}
+
+function pgQueue(sjo){
+  sjo=parseInt(sjo);
+  const d=getLS();
+  const q=d.queues[String(sjo)]||[];
+  return`
+<div class="bc"><strong onclick="go('kjoreliste-velg')">Kjørelistene</strong> / Sjø ${sjo}</div>
+<div class="ph"><h1><i class="fa-solid fa-${sjo===3?'cable-car':'water'}" style="color:${sjo===3?'var(--aqua)':'var(--blue)'}"></i> Sjø ${sjo} – ${sjo===3?'Kabel':'Båt'}</h1>
+<p>${q.length} person${q.length!==1?'er':''} på lista nå</p></div>
+<div class="g2">
+  <div class="card">
+    <div class="ch"><div class="ct"><i class="fa-solid fa-list-ol"></i> Køen nå</div><span style="font-size:12px;color:var(--txt-s)">${q.length} stk</span></div>
+    <div class="cb" style="padding-top:8px;padding-bottom:8px">
+      ${q.length===0?`<div class="qe"><i class="fa-solid fa-water"></i>Køen er tom 🌊</div>`:''}
+      <div class="ql">
+        ${q.map((m,i)=>`<div class="qi${m.isMe?' ':"'"}${m.isMe?'style="background:rgba(26,115,232,.04);border-radius:var(--rs);padding:10px 8px"':''}">
+          <div class="qpos${m.isMe?' me':''}">${i+1}</div>
+          <div class="qn">${m.name}${m.isMe?` <span style="font-size:11px;color:var(--blue);font-weight:700">(deg)</span>`:''}</div>
+          ${discPill(m.disc)}
+          ${m.addedAt?`<span style="font-size:11px;color:var(--txt-s)">${m.addedAt}</span>`:''}
+          ${m.isMe?`<button class="btn bda bsm" onclick="leaveQ(${sjo})"><i class="fa-solid fa-xmark"></i> Forlat</button>`:''}
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct"><i class="fa-solid fa-plus"></i> Meld deg på</div></div>
+    <div class="cb">
+      ${U.inQueue[sjo]?`
+        <div style="text-align:center;padding:20px 0">
+          <div style="width:56px;height:56px;border-radius:50%;background:rgba(30,200,122,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;color:var(--green)"><i class="fa-solid fa-check"></i></div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:4px">Du er påmeldt!</div>
+          <div style="font-size:13px;color:var(--txt-s);margin-bottom:18px">Gren: <strong>${U.myDisc}</strong></div>
+          <button class="btn br bfu" onclick="leaveQ(${sjo})"><i class="fa-solid fa-xmark"></i> Forlat køen</button>
+        </div>`:`
+        <div class="fg"><label>Velg gren</label>
+          <select id="qd${sjo}"><option value="">-- Velg gren --</option><option>Slalom</option><option>Hopp</option><option>Trick</option><option>Wakeboard</option></select>
+        </div>
+        <div style="background:var(--sky);border-radius:var(--rs);padding:11px;font-size:12.5px;color:var(--txt-m);margin-bottom:14px">
+          <i class="fa-solid fa-circle-info" style="color:var(--blue);margin-right:5px"></i>
+          Pris: <strong>110 kr</strong> · Saldo: <strong>${U.balance} kr</strong>
+          ${U.balance<110?`<div style="color:var(--red);font-weight:600;margin-top:4px"><i class="fa-solid fa-triangle-exclamation"></i> For lav saldo!</div>`:''}
+        </div>
+        <button class="btn bp bfu" onclick="joinQPage(${sjo})"${U.balance<110?' disabled style="opacity:.5;cursor:not-allowed"':''}>
+          <i class="fa-solid fa-person-walking-arrow-right"></i> Meld meg på
+        </button>
+        ${U.balance<110?`<button class="btn bo bfu" style="margin-top:8px" onclick="go('stripe')"><i class="fa-solid fa-coins"></i> Fyll på konto</button>`:''}
+      `}
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ch"><div class="ct"><i class="fa-solid fa-circle-info"></i> Om Sjø ${sjo}</div></div>
+  <div class="cb">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px">
+      ${[['Type',sjo===3?'Kabelanlegg':'Båtkjøring'],['Pris','110 kr / tur'],['Båtfører','Se kjørerside'],['Status','Åpen']].map(([l,v],i)=>`
+      <div style="text-align:center;padding:12px;background:var(--sky);border-radius:var(--rs)">
+        <div style="font-size:11px;color:var(--txt-s);text-transform:uppercase;font-weight:700;margin-bottom:5px">${l}</div>
+        <div style="font-size:14px;font-weight:700;color:${i===3?'var(--green)':'var(--txt)'}">${i===3?'<i class="fa-solid fa-circle" style="font-size:8px;margin-right:4px"></i>':''  }${v}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>`;
+}
+
+function joinQPage(sjo){
+  const disc=document.getElementById('qd'+sjo)?.value||'';
+  if(!disc){toast('Velg gren!','err');return;}
+  if(U.balance<110){toast('For lav saldo','err');return;}
+  U.inQueue[sjo]=true;U.myDisc=disc;
+  const d=getLS();
+  d.queues[String(sjo)]=d.queues[String(sjo)]||[];
+  d.queues[String(sjo)].push({id:`me_${Date.now()}`,name:U.name,disc,isMe:true,addedAt:new Date().toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit'})});
+  setLS(d);
+  toast(`Påmeldt Sjø ${sjo} – ${disc}!`,'ok');render();
+}
+
+function leaveQ(sjo){
+  U.inQueue[sjo]=false;
+  const d=getLS();
+  d.queues[String(sjo)]=(d.queues[String(sjo)]||[]).filter(x=>!x.isMe);
+  setLS(d);
+  toast(`Fjernet fra Sjø ${sjo}`,'info');render();
+}
+
+/* ── KONTO ── */
+function pgKonto(){
+  return`
+<div class="ph"><h1>Din konto</h1><p>Kontooversikt og profil</p></div>
+<div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap">
+  <div class="card" style="flex:1;min-width:200px">
+    <div class="cb" style="text-align:center;padding:26px 20px">
+      <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--blue-l),var(--aqua));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;margin:0 auto 12px">TJ</div>
+      <div style="font-size:18px;font-weight:800;margin-bottom:4px">Tobias S. Jacobsen</div>
+      <div style="font-size:13px;color:var(--txt-s);margin-bottom:16px">Moelv Vannskiklubb</div>
+      <div style="background:var(--sky);border-radius:var(--rs);padding:12px;display:inline-block;min-width:150px">
+        <div style="font-size:10px;color:var(--txt-s);font-weight:700;text-transform:uppercase;letter-spacing:.06em">Saldo</div>
+        <div style="font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--navy-mid)">${U.balance} kr</div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="flex:2;min-width:280px">
+    <div class="ch"><div class="ct"><i class="fa-regular fa-user"></i> Personlig info</div></div>
+    <div class="cb">
+      <div class="fg"><label>Fullt navn</label><input type="text" value="Tobias Svennebye Jacobsen"></div>
+      <div class="fg"><label>E-post</label><input type="email" value="tobias@example.no"></div>
+      <div class="fg"><label>Telefon</label><input type="tel" value="400 00 000"></div>
+      <div class="fg"><label>Fødselsdato</label><input type="date" value="2005-01-01"></div>
+      <button class="btn bp" onclick="toast('Profil oppdatert!','ok')"><i class="fa-solid fa-floppy-disk"></i> Lagre</button>
+    </div>
+  </div>
+</div>
+<div class="g3">
+  <div class="card"><div class="cb" style="text-align:center;padding:20px"><div style="font-size:32px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--blue);margin-bottom:5px">${total(2026)}</div><div style="font-size:12px;color:var(--txt-s)">Turer i 2026</div></div></div>
+  <div class="card"><div class="cb" style="text-align:center;padding:20px"><div style="font-size:32px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--gold);margin-bottom:5px">${total(2025)}</div><div style="font-size:12px;color:var(--txt-s)">Turer i 2025</div></div></div>
+  <div class="card"><div class="cb" style="text-align:center;padding:20px"><div style="font-size:32px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--green);margin-bottom:5px">${U.spent}</div><div style="font-size:12px;color:var(--txt-s)">Brukt kr (2026)</div></div></div>
+</div>
+<div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-shield-halved"></i> Kontohandlinger</div></div>
+  <div class="cb" style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn bp" onclick="go('stripe')"><i class="fa-solid fa-coins"></i> Fyll på konto</button>
+    <button class="btn bo" onclick="go('kontologg')"><i class="fa-solid fa-clock-rotate-left"></i> Kontologg</button>
+    <button class="btn bo" onclick="go('verdikupong')"><i class="fa-solid fa-ticket"></i> Verdikupong</button>
+    <button class="btn bo" onclick="go('innstillinger')"><i class="fa-solid fa-gear"></i> Innstillinger</button>
+    <button class="btn br" style="margin-left:auto" onclick="go('loggut')"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logg ut</button>
+  </div>
+</div>`;
+}
+
+/* ── KONTOLOGG ── */
+function pgKontologg(){
+  return`
+<div class="bc"><strong onclick="go('konto')">Konto</strong> / Kontologg</div>
+<div class="ph"><h1>Kontologg</h1><p>Alle transaksjoner</p></div>
+<div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-clock-rotate-left"></i> Transaksjoner</div><span style="font-size:12px;color:var(--txt-s)">Saldo: <strong>${U.balance} kr</strong></span></div>
+<div class="cb" style="padding:0">
+<table class="tbl"><thead><tr><th>Dato</th><th>Beskrivelse</th><th style="text-align:right">Beløp</th><th style="text-align:right">Saldo</th></tr></thead><tbody>
+${U.transactions.map(t=>`<tr>
+  <td style="color:var(--txt-s);white-space:nowrap;font-size:12.5px">${t.date}</td>
+  <td>${t.desc}${t.fromBoat?` <span class="pill ok" style="font-size:10px">Båt</span>`:''}</td>
+  <td class="num" style="color:${t.amt>0?'var(--green)':'var(--red)'};font-weight:700">${t.amt>0?'+':''}${t.amt} kr</td>
+  <td class="num">${t.bal} kr</td>
+</tr>`).join('')}
+</tbody></table></div></div>`;
+}
+
+/* ── AKTIVITET ── */
+function pgAktivitet(){
+  const d=getLS();
+  const boatTrips=(d.completedTrips||[]).filter(t=>t.name===U.name);
+  return`
+<div class="ph"><h1>Din aktivitet</h1></div>
+<div class="sr">
+  <div class="sc ab"><div class="sch"><div class="scl">Turer i år</div><div class="sci bl"><i class="fa-solid fa-person-skiing-nordic"></i></div></div><div class="scv">${total(2026)}</div><div class="scs">Av ${total(2025)} i fjor</div></div>
+  <div class="sc ag"><div class="sch"><div class="scl">Tid i år</div><div class="sci go"><i class="fa-solid fa-stopwatch"></i></div></div><div class="scv">37 min</div></div>
+  <div class="sc aa"><div class="sch"><div class="scl">Favorittgren</div><div class="sci aq"><i class="fa-solid fa-rotate"></i></div></div><div class="scv" style="font-size:18px">Trick</div></div>
+  <div class="sc an"><div class="sch"><div class="scl">Brukt i år</div><div class="sci gr"><i class="fa-solid fa-coins"></i></div></div><div class="scv" style="font-size:20px">${U.spent} kr</div></div>
+</div>
+<div class="card" style="margin-bottom:20px"><div class="ch"><div class="ct"><i class="fa-solid fa-pen"></i> Treningsdagbok</div></div>
+<div class="cb">
+  <div class="fg"><label>Dato</label><input type="date" value="2026-05-14"></div>
+  <div class="fg"><label>Gren</label><select><option>Slalom</option><option>Hopp</option><option>Trick</option><option>Wakeboard</option></select></div>
+  <div class="fg"><label>Notat</label><textarea rows="3" placeholder="Hva gikk bra? Hva kan forbedres?"></textarea></div>
+  <button class="btn bp" onclick="toast('Logg lagret! 💪','ok')"><i class="fa-solid fa-floppy-disk"></i> Lagre</button>
+</div></div>
+${boatTrips.length?`<div class="card" style="margin-bottom:20px"><div class="ch"><div class="ct"><i class="fa-solid fa-ship" style="color:var(--aqua)"></i> Turer registrert fra båt</div></div>
+<div class="cb" style="padding-top:8px;padding-bottom:8px">
+${boatTrips.map(t=>`<div class="ae"><div class="adt"><strong>${t.date?.split('.')[0]||'–'}</strong><span>MAI</span></div>
+<div class="ai"><div class="adn">${t.disc}</div><div class="adm">Sjø ${t.sjø} · Sjåfør: ${t.driver} · ${t.time}</div></div>
+<div class="avl comp"><strong>${fmtDur(t.durationMs)}</strong><span>varighet</span></div></div>`).join('')}
+</div></div>`:''}
+<div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-history"></i> Turhistorikk 2026</div></div>
+<div class="cb" style="padding-top:8px;padding-bottom:8px">
+${[{d:'01',m:'MAI',disc:'Trick',sj:'Sjø 1',dur:'15 min 13 sek',amt:110},{d:'20',m:'APR',disc:'Slalom',sj:'Sjø 2',dur:'13 min 40 sek',amt:110},{d:'18',m:'APR',disc:'Trick',sj:'Sjø 1',dur:'14 min 50 sek',amt:110},{d:'10',m:'APR',disc:'Slalom',sj:'Sjø 1',dur:'16 min 02 sek',amt:110}].map(e=>`
+<div class="ae"><div class="adt"><strong>${e.d}</strong><span>${e.m}</span></div>
+<div class="ai"><div class="adn">${e.disc}</div><div class="adm">${e.sj} · ${e.dur}</div></div>
+<div class="avl"><strong>−${e.amt} kr</strong><span>kostnad</span></div></div>`).join('')}
+</div></div>`;
+}
+
+/* ── INNSTILLINGER ── */
+function pgInnstillinger(){
+  const s=U.togSettings;
+  const T=(k,l,d)=>`<div class="sr2"><div class="sri"><strong>${l}</strong><span>${d}</span></div><button class="tog${s[k]?' on':''}" onclick="togSet('${k}')" id="tog-${k}"></button></div>`;
+  return`
+<div class="ph"><h1>Innstillinger</h1></div>
+<div class="g2">
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-bell"></i> Varsler</div></div>
+  <div class="cb" style="padding-top:4px;padding-bottom:4px">
+    ${T('push','Push-varsler','Varsler på telefonen')}
+    ${T('sms','SMS-varsler','SMS om køstatus')}
+    ${T('queue_notify','Kø-varsling','Neste i køen')}
+    ${T('news','Nyhetsbrev','Info fra klubben')}
+  </div></div>
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-lock"></i> Sikkerhet</div></div>
+  <div class="cb">
+    <div class="fg"><label>Nåværende passord</label><input type="password" placeholder="••••••••"></div>
+    <div class="fg"><label>Nytt passord</label><input type="password" placeholder="Min 8 tegn"></div>
+    <div class="fg"><label>Bekreft</label><input type="password" placeholder="Gjenta passord"></div>
+    <button class="btn bp" onclick="toast('Passord oppdatert!','ok')"><i class="fa-solid fa-shield-halved"></i> Oppdater</button>
+  </div></div>
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-palette"></i> Preferanser</div></div>
+  <div class="cb">
+    <div class="fg"><label>Standardgren</label><select><option>-- Ingen --</option><option>Slalom</option><option>Hopp</option><option>Trick</option><option>Wakeboard</option></select></div>
+    <div class="fg"><label>Standard sjø</label><select><option>-- Ingen --</option><option>Sjø 1</option><option>Sjø 2</option><option>Sjø 3 (Kabel)</option></select></div>
+    <button class="btn bp" onclick="toast('Lagret!','ok')"><i class="fa-solid fa-floppy-disk"></i> Lagre</button>
+  </div></div>
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-circle-exclamation" style="color:var(--red)"></i> Farlig sone</div></div>
+  <div class="cb">
+    <button class="btn br bfu" style="margin-bottom:8px" onclick="toast('Kontakt administrator','info',4000)"><i class="fa-solid fa-trash"></i> Slett konto</button>
+    <button class="btn bo bfu" onclick="go('loggut')"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logg ut</button>
+  </div></div>
+</div>`;
+}
+function togSet(k){U.togSettings[k]=!U.togSettings[k];const b=document.getElementById('tog-'+k);if(b)b.className='tog'+(U.togSettings[k]?' on':'');toast(U.togSettings[k]?'Slått på':'Slått av','info',1500);}
+
+/* ── STRIPE ── */
+function pgStripe(){
+  return`
+<div class="bc"><strong onclick="go('konto')">Konto</strong> / Fyll på</div>
+<div class="ph"><h1>Overfør penger</h1></div>
+<div class="g2">
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-credit-card"></i> Velg beløp</div></div>
+  <div class="cb">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+      ${[100,200,300,500,1000].map(a=>`<button class="btn bo" style="justify-content:center" onclick="setSA(${a})">${a} kr</button>`).join('')}
+    </div>
+    <div class="fg"><label>Eller skriv inn</label><div class="ig"><input type="number" id="sa" min="100" placeholder="200"><span class="unit">kr</span></div></div>
+    <p class="hint"><i class="fa-solid fa-lock"></i> Sikker betaling · BankID kreves</p>
+    <button class="btn bp bfu" style="font-size:15px;padding:12px" onclick="doCharge()"><i class="fa-solid fa-bolt"></i> Betal og lad opp</button>
+    <div style="margin-top:14px;display:flex;gap:8px;align-items:center;font-size:12px;color:var(--txt-s)">Godkjent:
+      <span style="background:var(--sky);padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;color:var(--txt-m)">VISA</span>
+      <span style="background:var(--sky);padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;color:var(--txt-m)">MC</span>
+      <span style="background:rgba(255,100,80,.1);padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;color:#e04b30">Vipps</span>
+    </div>
+  </div></div>
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-wallet"></i> Din saldo</div></div>
+  <div class="cb" style="text-align:center;padding:28px 20px">
+    <div style="font-size:46px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--navy-mid);line-height:1;margin-bottom:8px">${U.balance}</div>
+    <div style="font-size:16px;color:var(--txt-s);margin-bottom:20px">kroner tilgode</div>
+    <div style="background:var(--sky);border-radius:var(--rs);padding:12px;font-size:13px;color:var(--txt-m)">
+      <i class="fa-solid fa-info-circle" style="color:var(--blue);margin-right:5px"></i>
+      Pris per tur: <strong>110 kr</strong><br>Du kan kjøre <strong>${Math.floor(U.balance/110)}</strong> turer til
+    </div>
+    <button class="btn bo" style="margin-top:14px" onclick="go('kontologg')"><i class="fa-solid fa-clock-rotate-left"></i> Se kontologg</button>
+  </div></div>
+</div>`;
+}
+function setSA(a){const e=document.getElementById('sa');if(e)e.value=a;}
+function doCharge(){const v=parseInt(document.getElementById('sa')?.value||0);if(!v||v<100){toast('Min 100 kr','err');return;}U.balance+=v;U.transactions.unshift({date:'14.05.2026',desc:'Fyll på konto (Stripe)',amt:v,bal:U.balance});toast(`${v} kr lagt til! Saldo: ${U.balance} kr`,'ok');render();}
+
+/* ── VERDIKUPONG ── */
+function pgVerdikupong(){
+  return`
+<div class="bc"><strong onclick="go('konto')">Konto</strong> / Verdikupong</div>
+<div class="ph"><h1>Verdikupong</h1></div>
+<div class="g2">
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-ticket"></i> Løs inn kupong</div></div>
+  <div class="cb">
+    <div class="fg"><label>Kupongkode</label><input type="text" id="kk" placeholder="MVSK-XXXX-XXXX" style="letter-spacing:.08em;font-weight:600;text-transform:uppercase"></div>
+    <p class="hint"><i class="fa-regular fa-circle-question"></i> Koden finner du på kupongen fra klubben</p>
+    <p class="hint" style="color:var(--blue)"><i class="fa-solid fa-lightbulb"></i> Test-kode: MVSK-TEST-2026 (300 kr)</p>
+    <button class="btn bp bfu" onclick="redeemK()"><i class="fa-solid fa-gift"></i> Løs inn</button>
+  </div></div>
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-circle-info"></i> Info</div></div>
+  <div class="cb"><div class="fl">
+    <div class="fi"><div class="fic"><i class="fa-solid fa-check"></i></div><div class="flb">Gyldige hele sesongen</div></div>
+    <div class="fi"><div class="fic"><i class="fa-solid fa-check"></i></div><div class="flb">Legges direkte til saldo</div></div>
+    <div class="fi"><div class="fic"><i class="fa-solid fa-xmark" style="color:var(--red)"></i></div><div class="flb">Utløpte kuponger godtas ikke</div></div>
+    <div class="fi"><div class="fic"><i class="fa-solid fa-envelope"></i></div><div class="flb">Kontakt: <a href="mailto:post@MVSK.no" style="color:var(--blue)">post@MVSK.no</a></div></div>
+  </div></div></div>
+</div>`;
+}
+function redeemK(){const k=document.getElementById('kk')?.value?.trim().toUpperCase()||'';if(!k){toast('Skriv inn kupongkode','err');return;}if(k==='MVSK-TEST-2026'){U.balance+=300;U.transactions.unshift({date:'14.05.2026',desc:'Fyll på konto (Verdikupong)',amt:300,bal:U.balance});toast('Kupong løst inn! +300 kr 🎉','ok',4000);render();}else{toast('Ugyldig kupong','err');}}
+
+/* ── KALENDER ── */
+function pgKalender(){
+  const days=['Man','Tir','Ons','Tor','Fre','Lør','Søn'];
+  const resDays=[20,28];const today=14;
+  let cells='';for(let i=0;i<4;i++)cells+=`<div class="cd emp"></div>`;
+  for(let d=1;d<=31;d++){cells+=`<div class="cd${d===today?' today':resDays.includes(d)?' has':''}" onclick="${resDays.includes(d)?`toast('Reservasjon ${d}. mai','info')`:''}"> ${d}</div>`;}
+  return`
+<div class="ph"><h1>Aktivitetskalender</h1><p>Mai 2026</p></div>
+<div class="g2">
+  <div class="card"><div class="cb">
+    <div class="cn"><button class="btn bo" style="padding:6px 12px" onclick="toast('Forrige måned','info',1000)"><i class="fa-solid fa-chevron-left"></i></button><h3>Mai 2026</h3><button class="btn bo" style="padding:6px 12px" onclick="toast('Neste måned','info',1000)"><i class="fa-solid fa-chevron-right"></i></button></div>
+    <div class="cg">${days.map(d=>`<div class="cdh">${d}</div>`).join('')}${cells}</div>
+    <div style="margin-top:12px;display:flex;gap:14px;font-size:12px;color:var(--txt-s)">
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:11px;height:11px;border-radius:3px;background:var(--blue);display:inline-block"></span>I dag</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:11px;height:11px;border-radius:3px;background:rgba(0,201,177,.15);border:1.5px solid var(--aqua);display:inline-block"></span>Reservasjon</span>
+    </div>
+  </div></div>
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-calendar-check"></i> Kommende</div></div>
+  <div class="cb" style="padding-top:6px;padding-bottom:6px">
+    ${[{d:'20.05',t:'16:00–18:00',n:'Trening – Sjø 1',c:'blue'},{d:'28.05',t:'10:00–12:00',n:'Trening – Sjø 2',c:'aqua'},{d:'15.06',t:'Heldags',n:'MVSK Vårkonkurranse',c:'gold'}].map(e=>`
+    <div class="fi"><div class="fic" style="background:rgba(${e.c==='blue'?'26,115,232':e.c==='aqua'?'0,201,177':'245,166,35'},.1);color:var(--${e.c})"><i class="fa-regular fa-calendar"></i></div>
+    <div><div style="font-size:13.5px;font-weight:600">${e.n}</div><div style="font-size:12px;color:var(--txt-s)">${e.d} · ${e.t}</div></div></div>`).join('')}
+    <div style="margin-top:14px"><button class="btn bp bfu" onclick="go('reserver')"><i class="fa-solid fa-plus"></i> Ny reservasjon</button></div>
+  </div></div>
+</div>`;
+}
+
+/* ── MINE RESERVASJONER ── */
+function pgMineRes(){
+  return`
+<div class="bc"><strong onclick="go('kalender')">Kalender</strong> / Mine reservasjoner</div>
+<div class="ph"><h1>Mine reservasjoner</h1><p>${U.reservations.length} aktive</p></div>
+<div style="margin-bottom:14px"><button class="btn bp" onclick="go('reserver')"><i class="fa-solid fa-plus"></i> Ny reservasjon</button></div>
+${U.reservations.map((r,i)=>`
+<div class="card" style="margin-bottom:12px"><div class="cb" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+  <div style="width:52px;height:52px;border-radius:12px;background:var(--sky);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+    <strong style="font-size:17px;font-weight:800;color:var(--navy-mid)">${r.date.split('.')[0]}</strong>
+    <span style="font-size:10px;color:var(--txt-s);text-transform:uppercase;font-weight:600">MAI</span>
+  </div>
+  <div style="flex:1;min-width:150px"><div style="font-size:15px;font-weight:700">${r.res}</div><div style="font-size:13px;color:var(--txt-s);margin-top:2px"><i class="fa-regular fa-clock" style="margin-right:4px"></i>${r.time}</div></div>
+  <span class="pill ${r.status==='confirmed'?'ok':'pe'}">${r.status==='confirmed'?'Bekreftet':'Venter'}</span>
+  <button class="btn bda bsm" onclick="cancelR(${i})"><i class="fa-solid fa-xmark"></i> Avbryt</button>
+</div></div>`).join('')}
+${U.reservations.length===0?`<div class="card"><div class="cb" style="text-align:center;padding:36px;color:var(--txt-s)"><i class="fa-regular fa-calendar" style="font-size:36px;display:block;margin-bottom:10px;opacity:.3"></i>Ingen reservasjoner ennå</div></div>`:''}`;
+}
+function cancelR(i){U.reservations.splice(i,1);toast('Reservasjon avbrutt','info');render();}
+
+/* ── RESERVER ── */
+function pgReserver(){
+  return`
+<div class="bc"><strong onclick="go('mine-res')">Mine reservasjoner</strong> / Ny</div>
+<div class="ph"><h1>Reserver tid</h1></div>
+<div class="g2">
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-door-open"></i> Ny reservasjon</div></div>
+  <div class="cb">
+    <div class="fg"><label>Ressurs</label><select id="rr"><option>Sjø 1 + Båt</option><option>Sjø 2 + Båt</option><option>Sjø 3 – Kabelanlegg</option></select></div>
+    <div class="fg"><label>Dato</label><input type="date" id="rd" value="2026-05-20"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label>Fra</label><input type="time" id="rf" value="16:00"></div>
+      <div class="fg"><label>Til</label><input type="time" id="rt" value="18:00"></div>
+    </div>
+    <div class="fg"><label>Antall deltakere</label><input type="number" min="1" max="20" value="3"></div>
+    <div class="fg"><label>Merknad</label><textarea rows="2" placeholder="Eks: Trening med laget"></textarea></div>
+    <button class="btn bp bfu" onclick="doRes()"><i class="fa-solid fa-calendar-plus"></i> Reserver</button>
+  </div></div>
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-circle-info"></i> Regler</div></div>
+  <div class="cb"><div class="fl">
+    <div class="fi"><div class="fic"><i class="fa-solid fa-clock"></i></div><div class="flb">Maks 2 timer per reservasjon</div></div>
+    <div class="fi"><div class="fic"><i class="fa-solid fa-calendar"></i></div><div class="flb">Maks 14 dager frem i tid</div></div>
+    <div class="fi"><div class="fic"><i class="fa-solid fa-person-circle-xmark"></i></div><div class="flb">Avbestill senest 24 timer før</div></div>
+  </div>
+  <div style="margin-top:14px"><a class="btn bo bfu" href="veileder_reservasjonssystem_MVSK.pdf" target="_blank"><i class="fa-regular fa-file-pdf"></i> Brukerveiledning PDF</a></div>
+  </div></div>
+</div>`;
+}
+function doRes(){const res=document.getElementById('rr')?.value;const dato=document.getElementById('rd')?.value;const fra=document.getElementById('rf')?.value;const til=document.getElementById('rt')?.value;if(!dato||!fra||!til){toast('Fyll ut alle felt','err');return;}const d=dato.split('-');U.reservations.push({id:Date.now(),date:`${d[2]}.${d[1]}.${d[0]}`,time:`${fra}–${til}`,res,status:'pending'});toast('Reservasjon sendt! 📅','ok',3000);setTimeout(()=>go('mine-res'),700);}
+
+/* ── KONKURRANSER ── */
+function pgKonk(){
+  return`
+<div class="ph"><h1>Konkurranser</h1></div>
+${U.competitions.map((c,i)=>`
+<div class="cc${c.reg?' reg':''}">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+    <div><div class="ccn">${c.name}</div><div class="ccd"><i class="fa-regular fa-calendar" style="color:var(--blue)"></i>${c.date}</div></div>
+    <span class="pill ${c.reg?'ok':'pe'}">${c.reg?'Påmeldt':'Åpen'}</span>
+  </div>
+  <div class="ccm"><span><i class="fa-solid fa-location-dot"></i>${c.loc}</span><span><i class="fa-solid fa-person-skiing-nordic"></i>${c.disc}</span></div>
+  <div style="margin-top:12px;display:flex;gap:8px">
+    ${c.reg?`<button class="btn bda bsm" onclick="cancelC(${i})"><i class="fa-solid fa-xmark"></i> Meld av</button>`:
+    `<button class="btn bp bsm" onclick="joinC(${i})"><i class="fa-solid fa-person-walking-arrow-right"></i> Meld på</button>`}
+    <button class="btn bo bsm" onclick="toast('Info åpnes','info')"><i class="fa-solid fa-circle-info"></i> Info</button>
+  </div>
+</div>`).join('')}`;
+}
+function joinC(i){U.competitions[i].reg=true;toast(`Påmeldt ${U.competitions[i].name}! 🏆`,'ok');render();}
+function cancelC(i){U.competitions[i].reg=false;toast('Avmeldt','info');render();}
+
+/* ── RAPPORTER ── */
+function pgRapport(){
+  return`
+<div class="ph"><h1>Rapporter</h1></div>
+<div class="sr">
+  <div class="sc ab"><div class="sch"><div class="scl">2026</div><div class="sci bl"><i class="fa-solid fa-chart-bar"></i></div></div><div class="scv">${total(2026)}</div><div class="scs">turer</div></div>
+  <div class="sc aa"><div class="sch"><div class="scl">Favoritt</div><div class="sci aq"><i class="fa-solid fa-rotate"></i></div></div><div class="scv" style="font-size:16px">Trick</div></div>
+  <div class="sc ag"><div class="sch"><div class="scl">Snitt/mnd</div><div class="sci go"><i class="fa-solid fa-arrows-left-right"></i></div></div><div class="scv">${(total(2026)/4).toFixed(1)}</div></div>
+  <div class="sc an"><div class="sch"><div class="scl">Båtfører</div><div class="sci gr"><i class="fa-solid fa-ship"></i></div></div><div class="scv">0</div><div class="scs">sek</div></div>
+</div>
+<div class="g2">
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-chart-bar"></i> Månedlig</div></div><div class="cb"><div class="cw"><canvas id="rb"></canvas></div></div></div>
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-chart-pie"></i> Per gren 2026</div></div><div class="cb"><div class="cw"><canvas id="rp"></canvas></div></div></div>
+</div>
+<div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-table"></i> Detaljert</div></div>
+<div class="cb" style="padding:0"><table class="tbl">
+<thead><tr><th>Gren</th><th style="text-align:right">2024</th><th style="text-align:right">2025</th><th style="text-align:right">2026</th></tr></thead>
+<tbody>
+${[['Slalom',1,2,2],['Hopp',0,0,0],['Wakeboard',0,0,0],['Trick',8,11,2],['Annet',0,0,0]].map(([g,a,b,c])=>`<tr><td>${g}</td><td class="num">${a}</td><td class="num">${b}</td><td class="num hi">${c}</td></tr>`).join('')}
+<tr class="tot"><td><strong>Totalt</strong></td><td class="num">9</td><td class="num">${total(2025)}</td><td class="num hi">${total(2026)}</td></tr>
+</tbody></table></div></div>`;
+}
+function initRapCharts(){
+  const rb=document.getElementById('rb'),rp=document.getElementById('rp');
+  if(rb&&window.Chart)new Chart(rb,{type:'bar',data:{labels:['Apr','Mai','Jun','Jul','Aug','Sep'],datasets:[{label:'2026',data:[2,2,0,0,0,0],backgroundColor:'rgba(26,115,232,.85)',borderRadius:5,borderSkipped:false},{label:'2025',data:[4,4,3,2,0,0],backgroundColor:'rgba(214,230,245,.8)',borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Outfit',size:11},color:'#7B95AE'}},y:{grid:{color:'rgba(214,230,245,.4)'},ticks:{precision:0,font:{family:'Outfit',size:11},color:'#7B95AE'},border:{display:false}}}}});
+  if(rp&&window.Chart&&total(2026)>0)new Chart(rp,{type:'doughnut',data:{labels:['Slalom','Trick'],datasets:[{data:[U.trips[2026].slalom,U.trips[2026].trick],backgroundColor:['rgba(26,115,232,.85)','rgba(124,58,237,.85)'],borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{family:'Outfit',size:12},padding:14}}},cutout:'60%'}});
+}
+
+/* ── FEEDBACK ── */
+function pgFeedback(){
+  if(U.feedbackDone)return`<div class="ph"><h1>Tilbakemelding</h1></div><div class="card"><div class="cb" style="text-align:center;padding:44px 24px"><div style="width:68px;height:68px;border-radius:50%;background:rgba(30,200,122,.1);border:2px solid rgba(30,200,122,.4);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--green);margin:0 auto 16px"><i class="fa-solid fa-check"></i></div><div style="font-size:20px;font-weight:800;margin-bottom:6px">Takk for tilbakemeldingen!</div><div style="font-size:14px;color:var(--txt-s);margin-bottom:22px">Vi setter stor pris på innspillene dine.</div><button class="btn bp" onclick="U.feedbackDone=false;go('dashboard')"><i class="fa-solid fa-house"></i> Tilbake til dashboard</button></div></div>`;
+  return`
+<div class="ph"><h1>Tilbakemelding</h1></div>
+<div class="g2">
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-regular fa-comment"></i> Send inn</div></div>
+  <div class="cb">
+    <div class="fg"><label>Kategori</label><select id="fbk"><option>Kjøreliste</option><option>Reservasjonssystem</option><option>Nettside / App</option><option>Anlegg</option><option>Annet</option></select></div>
+    <div class="fg"><label>Prioritet</label><select><option>Lav</option><option selected>Middels</option><option>Høy</option></select></div>
+    <div class="fg"><label>Tilbakemelding</label><textarea id="fbm" rows="5" placeholder="Beskriv hva du ønsker å si..."></textarea></div>
+    <div class="fg"><label>E-post (valgfri)</label><input type="email" placeholder="din@epost.no"></div>
+    <div style="display:flex;gap:8px"><button class="btn bp" onclick="sendFb()"><i class="fa-solid fa-paper-plane"></i> Send</button><button class="btn bo" onclick="go('dashboard')">Avbryt</button></div>
+  </div></div>
+  <div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-star"></i> Vurdering</div></div>
+  <div class="cb">
+    <p style="font-size:13.5px;color:var(--txt-s);margin-bottom:14px">Hvordan vurderer du din opplevelse?</p>
+    <div style="display:flex;gap:5px;margin-bottom:18px">${[1,2,3,4,5].map(n=>`<button onclick="setStar(${n})" style="font-size:28px;background:none;border:none;cursor:pointer;color:#DDD;transition:color .1s" id="st${n}">★</button>`).join('')}</div>
+    <div class="fg"><label>Kommentar</label><textarea rows="3" placeholder="Valgfri kommentar"></textarea></div>
+    <button class="btn bp" onclick="toast('Vurdering sendt! ⭐','ok')"><i class="fa-solid fa-paper-plane"></i> Send</button>
+  </div></div>
+</div>`;
+}
+function setStar(n){for(let i=1;i<=5;i++){const s=document.getElementById('st'+i);if(s)s.style.color=i<=n?'var(--gold)':'#DDD';}toast(`${n} stjerne${n!==1?'r':''}!`,'info',1500);}
+function sendFb(){const m=document.getElementById('fbm')?.value?.trim()||'';if(!m){toast('Skriv noe i feltet','err');return;}U.feedbackDone=true;toast('Tilbakemelding sendt! 🙏','ok',3000);setTimeout(render,400);}
+
+/* ── LOGG UT ── */
+function pgLoggut(){return`<div class="ph"><h1>Logg ut</h1></div><div class="card" style="max-width:380px;margin:0 auto"><div class="cb" style="text-align:center;padding:32px 24px"><div style="width:60px;height:60px;border-radius:50%;background:rgba(232,68,90,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;color:var(--red)"><i class="fa-solid fa-arrow-right-from-bracket"></i></div><div style="font-size:18px;font-weight:800;margin-bottom:6px">Vil du logge ut?</div><div style="font-size:13.5px;color:var(--txt-s);margin-bottom:22px">Logget inn som <strong>Tobias S. Jacobsen</strong></div><div style="display:flex;gap:10px;justify-content:center"><button class="btn br" onclick="toast('Logget ut (demo)','info',3000)"><i class="fa-solid fa-check"></i> Ja, logg ut</button><button class="btn bo" onclick="go('dashboard')">Avbryt</button></div></div></div>`;}
+
+/* ── INIT ── */
+U._lastLSStr=JSON.stringify(getLS());
+go('dashboard');
+</script>
+</body>
+</html>
