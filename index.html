@@ -235,7 +235,7 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
 <div id="authWrap">
   <div class="auth-card">
 
-    <!-- LOGO: legg logo.png eller logo.jpg i samme mappe. Faller tilbake til ikon automatisk. -->
+    <!-- LOGO: legg logo.png eller logo.jpg i samme mappe -->
     <div class="auth-logo-wrap">
       <img id="authLogoImg" class="auth-logo-img"
            src="logo.png"
@@ -245,44 +245,22 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
     </div>
 
     <div class="auth-title">Slåstad Vannskiklubb</div>
-    <div class="auth-sub">Logg inn for å bruke kjørelisten</div>
+    <div class="auth-sub">Logg inn eller registrer deg med Google</div>
 
-    <div class="atabs">
-      <div class="atab active" id="atab-login" onclick="switchTab('login')">Logg inn</div>
-      <div class="atab" id="atab-reg"   onclick="switchTab('reg')">Registrer deg</div>
+    <div class="auth-err" id="err-login" style="margin-bottom:16px"><i class="fa-solid fa-circle-xmark"></i><span id="err-login-txt"></span></div>
+
+    <button class="btn b-google bfu" onclick="doGoogle()" id="googleBtn" style="justify-content:center;gap:12px;padding:14px 20px;font-size:15px;margin-bottom:16px">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Fortsett med Google
+    </button>
+
+    <div style="padding:14px 16px;background:var(--sky);border-radius:var(--rs);font-size:13px;color:var(--tm)">
+      <i class="fa-solid fa-circle-info" style="color:var(--blue);margin-right:6px"></i>
+      Første gang? Konto opprettes automatisk når du logger inn.
     </div>
 
-    <!-- LOGIN -->
-    <div id="form-login">
-      <div class="auth-err" id="err-login"><i class="fa-solid fa-circle-xmark"></i><span id="err-login-txt"></span></div>
-      <div class="fg"><label>E-postadresse</label><input type="email" id="l-email" placeholder="din@epost.no" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <div class="fg"><label>Passord</label><input type="password" id="l-pw" placeholder="Passord" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <button class="btn bp bfu" id="loginBtn" onclick="doLogin()" style="margin-bottom:6px"><i class="fa-solid fa-arrow-right-to-bracket"></i> Logg inn</button>
-      <div style="text-align:right;margin-bottom:14px"><span style="font-size:12px;color:var(--blue);cursor:pointer;font-weight:600" onclick="doForgotPw()">Glemt passord?</span></div>
-      <div class="divider">eller</div>
-      <button class="btn b-google bfu" onclick="doGoogle()" style="justify-content:center;gap:10px">
-        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-        Fortsett med Google
-      </button>
-    </div>
-
-    <!-- REGISTER -->
-    <div id="form-reg" style="display:none">
-      <div class="auth-err" id="err-reg"><i class="fa-solid fa-circle-xmark"></i><span id="err-reg-txt"></span></div>
-      <div class="fg"><label>Fullt navn</label><input type="text" id="r-name" placeholder="Ola Nordmann" autocomplete="name"></div>
-      <div class="fg"><label>E-postadresse</label><input type="email" id="r-email" placeholder="din@epost.no" autocomplete="email"></div>
-      <div class="fg"><label>Passord (min 6 tegn)</label><input type="password" id="r-pw" placeholder="Passord" autocomplete="new-password"></div>
-      <div class="fg"><label>Bekreft passord</label><input type="password" id="r-pw2" placeholder="Gjenta passord" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
-      <button class="btn bp bfu" onclick="doRegister()" style="margin-bottom:14px"><i class="fa-solid fa-user-plus"></i> Opprett konto</button>
-      <div class="divider">eller</div>
-      <button class="btn b-google bfu" onclick="doGoogle()" style="justify-content:center;gap:10px">
-        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-        Registrer med Google
-      </button>
-    </div>
-
-    <div style="margin-top:20px;text-align:center;font-size:11.5px;color:var(--ts)">
-      Ved å registrere deg godtar du <a href="#" style="color:var(--blue)">vilkår og personvern</a>.
+    <div style="margin-top:14px;text-align:center;font-size:11.5px;color:var(--ts)">
+      Ved å logge inn godtar du <a href="#" style="color:var(--blue)">vilkår og personvern</a>.
     </div>
   </div>
 </div>
@@ -392,9 +370,9 @@ function calcPris(durationMs) {
    ║  FIREBASE CONFIG – bytt ut med dine egne verdier!           ║
    ╚══════════════════════════════════════════════════════════════╝ */
 const FIREBASE_CONFIG = {
-   apiKey:            "AIzaSyD24SH3zwKUWmxxEXlhzuPG9vOoVJ1ymq4",
+  apiKey:            "AIzaSyD24SH3zwKUWmxxEXlhzuPG9vOoVJ1ymq4",
   authDomain:        "waterqueue-6a605.firebaseapp.com",
-  databaseURL:       "https://ditt-prosjekt-default-rtdb.europe-west1.firebasedatabase.app",
+  databaseURL:       "https://waterqueue-6a605-default-rtdb.europe-west1.firebasedatabase.app",
   projectId:         "waterqueue-6a605",
   storageBucket:     "waterqueue-6a605.firebasestorage.app",
   messagingSenderId: "197502345135",
@@ -404,7 +382,6 @@ const FIREBASE_CONFIG = {
 firebase.initializeApp(FIREBASE_CONFIG);
 const auth = firebase.auth();
 const db   = firebase.database();
-const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 /* ═══════════════ INAKTIVITET (10 min) ════════════════════════ */
 const INACTIVE_MS = 10 * 60 * 1000;
@@ -445,79 +422,33 @@ auth.onAuthStateChanged(user=>{
 });
 
 /* ═══════════════ AUTH FORMS ═══════════════════════════════════ */
-function switchTab(t){
-  ['login','reg'].forEach(x=>{
-    document.getElementById('atab-'+x).classList.toggle('active',x===t);
-    document.getElementById('form-'+x).style.display=x===t?'block':'none';
-  });
-  document.getElementById('err-login').style.display='none';
-  document.getElementById('err-reg').style.display='none';
-}
+// Email tabs removed - Google only
 function showErr(form,msg){
-  const el=document.getElementById('err-'+form);
-  document.getElementById('err-'+form+'-txt').textContent=msg;
+  const el=document.getElementById('err-login');
+  if(!el) return;
+  document.getElementById('err-login-txt').textContent=msg;
   el.style.display='flex';
 }
 
-async function doLogin(){
-  document.getElementById('err-login').style.display='none';
-  const email=document.getElementById('l-email').value.trim();
-  const pw=document.getElementById('l-pw').value;
-  if(!email||!pw){ showErr('login','Fyll ut e-post og passord'); return; }
-  const btn=document.getElementById('loginBtn');
-  btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Logger inn...';
-  btn.disabled=true;
-  try {
-    await auth.signInWithEmailAndPassword(email,pw);
-  } catch(e){
-    btn.innerHTML='<i class="fa-solid fa-arrow-right-to-bracket"></i> Logg inn';
-    btn.disabled=false;
-    const msgs={'auth/user-not-found':'Ingen bruker med denne e-posten','auth/wrong-password':'Feil passord','auth/invalid-email':'Ugyldig e-postadresse','auth/too-many-requests':'For mange forsøk – vent litt','auth/invalid-credential':'Feil e-post eller passord'};
-    showErr('login', msgs[e.code]||'Kunne ikke logge inn ('+e.code+')');
-  }
-}
+// doLogin removed - Google only
 
-async function doRegister(){
-  document.getElementById('err-reg').style.display='none';
-  const name =document.getElementById('r-name').value.trim();
-  const email=document.getElementById('r-email').value.trim();
-  const pw   =document.getElementById('r-pw').value;
-  const pw2  =document.getElementById('r-pw2').value;
-  if(!name)       { showErr('reg','Skriv inn fullt navn'); return; }
-  if(!email)      { showErr('reg','Skriv inn e-postadresse'); return; }
-  if(pw.length<6) { showErr('reg','Passord må være minst 6 tegn'); return; }
-  if(pw!==pw2)    { showErr('reg','Passordene er ikke like'); return; }
-  try {
-    const cred=await auth.createUserWithEmailAndPassword(email,pw);
-    await cred.user.updateProfile({displayName:name});
-    await db.ref('users/'+cred.user.uid).set(defaultUserData(name,email));
-  } catch(e){
-    const msgs={'auth/email-already-in-use':'E-posten er allerede registrert','auth/invalid-email':'Ugyldig e-postadresse','auth/weak-password':'Passordet er for svakt'};
-    showErr('reg', msgs[e.code]||'Kunne ikke opprette konto ('+e.code+')');
-  }
-}
+// doRegister removed - Google only
 
-/* Google – bruker redirect (virker i alle nettlesere, ikke blokkert) */
+/* Google – bruker redirect */
 function doGoogle(){
-  sessionStorage.setItem('googleRedirect','1');
+  const btn = document.getElementById('googleBtn');
+  if(btn){ btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Videresender...'; btn.disabled=true; }
   auth.signInWithRedirect(googleProvider).catch(e=>{
-    sessionStorage.removeItem('googleRedirect');
+    if(btn){ btn.innerHTML='<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Fortsett med Google'; btn.disabled=false; }
     if(e.code==='auth/unauthorized-domain'){
-      showErr('login',
-        'Domenet er ikke autorisert. Gå til Firebase Console → Authentication → Settings → Authorized domains → Add domain → skriv inn "'+window.location.hostname+'"'
-      );
+      showErr('login','Domenet ikke autorisert i Firebase. Legg til "'+window.location.hostname+'" i Firebase Console → Authentication → Authorized domains');
     } else {
       showErr('login','Google-innlogging feilet: '+e.message);
     }
   });
 }
 
-async function doForgotPw(){
-  const email=document.getElementById('l-email').value.trim();
-  if(!email){ showErr('login','Skriv inn e-posten din over'); return; }
-  try { await auth.sendPasswordResetEmail(email); toast('Tilbakestillingslenke sendt til '+email,'ok',5000); }
-  catch(e){ showErr('login','Kunne ikke sende e-post'); }
-}
+// doForgotPw removed - Google only
 
 function doLogout(){
   showModal('Logg ut?',`Er du sikker på at du vil logge ut, ${udata?.name?.split(' ')[0]||''}?`,[
@@ -593,13 +524,14 @@ async function loadUser(user){
 
   } catch(e){
     console.error('loadUser feil:', e);
-    hideLoad();
-    if(e.code==='PERMISSION_DENIED'){
-      toast('Tilgang nektet – sjekk Firebase-regler (testmodus)','err',6000);
-    } else {
-      toast('Feil ved innlasting: '+e.message,'err',5000);
-    }
-    setTimeout(()=>auth.signOut(), 3000);
+    // Logg ut og gå tilbake til auth-siden så siden ikke fryser blank
+    try { await auth.signOut(); } catch(_){}
+    showAuth();
+    // Vis feilmelding på innloggingssiden
+    const msg = e.code==='PERMISSION_DENIED'
+      ? 'Database-tilgang nektet. Bytt til testmodus i Firebase Realtime Database → Rules'
+      : (e.message||'Ukjent feil ved innlasting');
+    setTimeout(()=>showErr('login', msg), 200);
   }
 }
 
