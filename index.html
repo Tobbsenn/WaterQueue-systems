@@ -9,17 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-
-<!-- ╔══════════════════════════════════════════════════════════════╗
-     ║  FIREBASE — bytt ut med dine egne credentials!              ║
-     ║  1. firebase.google.com → ditt prosjekt                     ║
-     ║  2. Project Settings → Web app → kopier config              ║
-     ║  3. Skru på Authentication (Email+Google) + Realtime DB     ║
-     ╚══════════════════════════════════════════════════════════════╝ -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -28,40 +20,45 @@
   --txt:#0D1B2A;--tm:#3D5166;--ts:#7B95AE;--bdr:#D6E6F5;
   --gold:#F5A623;--red:#E8445A;--green:#1EC87A;--pur:#7C3AED;
   --sw:264px;--r:14px;--rs:9px;
-  --sh:0 2px 12px rgba(11,30,61,.07);--shm:0 4px 24px rgba(11,30,61,.13);
-  --t:.18s ease;
+  --sh:0 2px 12px rgba(11,30,61,.07);--shm:0 4px 24px rgba(11,30,61,.13);--t:.18s ease;
 }
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;font-size:14px}
 
-/* ── FULL-SCREEN LAYERS ── */
+/* FULL SCREEN LAYERS */
 #authWrap,#loadWrap{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center}
 #authWrap{background:linear-gradient(135deg,#0B1E3D 0%,#162F5A 60%,#0d3060 100%)}
 #loadWrap{background:rgba(255,255,255,.96)}
 .spinner{width:48px;height:48px;border:4px solid var(--bdr);border-top-color:var(--blue);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── AUTH CARD ── */
-.auth-card{background:var(--w);border-radius:20px;padding:40px 36px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);animation:slideUp .4s cubic-bezier(.34,1.2,.64,1)}
+/* AUTH */
+.auth-card{background:var(--w);border-radius:20px;padding:36px 32px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);animation:slideUp .4s cubic-bezier(.34,1.2,.64,1)}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.auth-logo{width:64px;height:64px;background:linear-gradient(135deg,var(--blue),var(--aqua));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;margin:0 auto 18px;box-shadow:0 4px 16px rgba(26,115,232,.35)}
-.auth-title{font-size:24px;font-weight:800;text-align:center;color:var(--txt);margin-bottom:4px}
-.auth-sub{font-size:13px;color:var(--ts);text-align:center;margin-bottom:28px}
-.atabs{display:flex;background:var(--sky);border-radius:var(--rs);padding:4px;margin-bottom:24px}
+
+/* LOGO – works with image OR icon fallback */
+.auth-logo-wrap{width:80px;height:80px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center}
+.auth-logo-img{width:80px;height:80px;border-radius:18px;object-fit:cover;box-shadow:0 4px 16px rgba(0,0,0,.25);display:block}
+.auth-logo-icon{width:80px;height:80px;background:linear-gradient(135deg,var(--blue),var(--aqua));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;box-shadow:0 4px 16px rgba(26,115,232,.35)}
+
+.auth-title{font-size:22px;font-weight:800;text-align:center;color:var(--txt);margin-bottom:4px}
+.auth-sub{font-size:13px;color:var(--ts);text-align:center;margin-bottom:26px}
+.atabs{display:flex;background:var(--sky);border-radius:var(--rs);padding:4px;margin-bottom:22px}
 .atab{flex:1;padding:9px;text-align:center;font-size:13.5px;font-weight:600;color:var(--ts);cursor:pointer;border-radius:7px;transition:all var(--t);user-select:none}
 .atab.active{background:var(--w);color:var(--blue);box-shadow:var(--sh)}
 .divider{display:flex;align-items:center;gap:12px;margin:16px 0;font-size:12px;color:var(--ts)}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--bdr)}
 .auth-err{background:rgba(232,68,90,.08);border:1px solid rgba(232,68,90,.25);border-radius:var(--rs);padding:10px 13px;font-size:13px;color:var(--red);font-weight:600;margin-bottom:12px;display:none;align-items:center;gap:7px}
 
-/* ── SIDEBAR ── */
+/* SIDEBAR */
 .sb{width:var(--sw);min-height:100vh;background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;transition:transform var(--t)}
-.sb-logo{padding:20px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
-.sb-ico{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--aqua));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;flex-shrink:0}
+.sb-logo{padding:18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:11px;cursor:pointer;user-select:none}
+.sb-logo-img{width:36px;height:36px;border-radius:10px;object-fit:cover;flex-shrink:0;display:none}
+.sb-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--blue),var(--aqua));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;flex-shrink:0}
 .sb-logo strong{display:block;font-size:13px;font-weight:700;color:#fff}
 .sb-logo span{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase}
 .sb-user{padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
-.sb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--bl),var(--aqua));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
-.sb-uname{color:rgba(255,255,255,.9);font-size:12.5px;font-weight:600;display:block;line-height:1.3;cursor:pointer;transition:color var(--t)}
+.sb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--bl),var(--aqua));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+.sb-uname{color:rgba(255,255,255,.9);font-size:12.5px;font-weight:600;display:block;cursor:pointer;transition:color var(--t)}
 .sb-uname:hover{color:#fff}
 .sb-logout{font-size:11px;color:rgba(255,255,255,.35);cursor:pointer;transition:color var(--t)}
 .sb-logout:hover{color:var(--red)}
@@ -77,21 +74,18 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .nb{margin-left:auto;background:var(--gold);color:#fff;font-size:9.5px;font-weight:800;padding:1px 6px;border-radius:20px;min-width:18px;text-align:center;line-height:1.4}
 .nb.g{background:var(--green)}.nb.b{background:var(--blue)}
 .ndiv{height:1px;background:rgba(255,255,255,.055);margin:8px 18px}
-
-/* Andre servicer accordion */
+/* Andre servicer */
 .as-btn{display:flex;align-items:center;gap:10px;padding:9px 18px;margin:1px 8px;border-radius:var(--rs);color:rgba(255,255,255,.58);font-size:13.5px;cursor:pointer;user-select:none;transition:all var(--t)}
 .as-btn:hover{background:rgba(255,255,255,.07);color:#fff}
 .as-btn .chev{margin-left:auto;font-size:11px;transition:transform var(--t)}
 .as-btn.open .chev{transform:rotate(180deg)}
 .as-sub{overflow:hidden;max-height:0;transition:max-height .25s ease}
 .as-sub.open{max-height:200px}
-.as-sub .na{padding:8px 18px 8px 44px;font-size:13px;color:rgba(255,255,255,.5)}
-.as-sub .na:hover{color:#fff;background:rgba(255,255,255,.06)}
-
+.as-sub .na{padding-left:44px;font-size:13px;color:rgba(255,255,255,.5)}
 .sb-foot{padding:12px 18px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;color:rgba(255,255,255,.2);display:flex;justify-content:space-between}
 .sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:199}
 
-/* ── MAIN ── */
+/* MAIN */
 .main{margin-left:var(--sw);display:flex;flex-direction:column;min-height:100vh}
 .top{height:60px;background:var(--w);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:100}
 .menu-btn{display:none;width:34px;height:34px;border-radius:var(--rs);background:none;border:1px solid var(--bdr);cursor:pointer;align-items:center;justify-content:center;color:var(--tm);font-size:16px;flex-shrink:0}
@@ -100,11 +94,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .qdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--ts);transition:background var(--t)}
 .qdot.live{background:var(--green)}.qdot.busy{background:var(--gold)}
 .topr{display:flex;align-items:center;gap:8px;margin-left:auto}
-.tbi{width:36px;height:36px;border-radius:var(--rs);background:none;border:1px solid var(--bdr);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tm);font-size:15px;transition:all var(--t);text-decoration:none}
+.tbi{width:36px;height:36px;border-radius:var(--rs);background:none;border:1px solid var(--bdr);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tm);font-size:15px;transition:all var(--t)}
 .tbi:hover{background:var(--sky);border-color:var(--skm);color:var(--navy)}
 .tbi.aqua{border-color:rgba(0,201,177,.35);color:var(--aqua)}
 
-/* ── CONTENT ── */
+/* CONTENT */
 .cnt{padding:24px;flex:1}
 .ph{margin-bottom:22px}
 .ph h1{font-size:22px;font-weight:800}
@@ -113,7 +107,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .bc b{color:var(--blue);cursor:pointer;font-weight:600}
 .bc b:hover{text-decoration:underline}
 
-/* ── STAT CARDS ── */
+/* STAT CARDS */
 .sr{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin-bottom:22px}
 .sc{background:var(--w);border:1px solid var(--bdr);border-radius:var(--r);padding:18px;box-shadow:var(--sh);transition:transform var(--t),box-shadow var(--t);animation:fu .35s ease both}
 .sc:hover{transform:translateY(-2px);box-shadow:var(--shm)}
@@ -125,7 +119,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .scv{font-size:26px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;margin-bottom:2px}
 .scs{font-size:12px;color:var(--ts)}
 
-/* ── CARD ── */
+/* CARDS */
 .card{background:var(--w);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;animation:fu .35s ease both}
 .ch{padding:15px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
 .ct{font-size:14px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:8px}
@@ -135,19 +129,18 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:20px}
 .cs2{grid-column:span 2}
 
-/* ── BUTTONS ── */
+/* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;border:none;transition:all var(--t);line-height:1;user-select:none;text-decoration:none}
 .bp{background:var(--blue);color:#fff}.bp:hover{background:#0D5CC5;transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,115,232,.3)}.bp:active{transform:translateY(0)}
 .bo{background:none;color:var(--tm);border:1.5px solid var(--bdr)}.bo:hover{border-color:var(--blue);color:var(--blue);background:var(--sky)}
 .br{background:var(--red);color:#fff}.br:hover{background:#c73048;transform:translateY(-1px)}
-.baq{background:var(--aqua);color:#fff}.baq:hover{background:#00a892}
 .bfu{width:100%;justify-content:center}
 .bsm{padding:6px 12px;font-size:12px}
 .bda{background:rgba(232,68,90,.1);color:var(--red);border:1.5px solid rgba(232,68,90,.2)}.bda:hover{background:var(--red);color:#fff}
-.b-google{background:var(--w);color:var(--txt);border:1.5px solid var(--bdr);font-weight:600;padding:11px 18px;font-size:14px;justify-content:center;gap:10px}
+.b-google{background:var(--w);color:var(--txt);border:1.5px solid var(--bdr);font-weight:600;padding:11px 18px;font-size:14px}
 .b-google:hover{background:var(--sky);border-color:var(--blue)}
 
-/* ── FORMS ── */
+/* FORMS */
 .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
 .fg label{font-size:12.5px;font-weight:600;color:var(--tm)}
 .fg input,.fg select,.fg textarea{border:1.5px solid var(--bdr);border-radius:var(--rs);padding:9px 13px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--txt);background:var(--w);transition:border-color var(--t);outline:none}
@@ -159,7 +152,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .ig .unit{padding:9px 13px;background:var(--sky);color:var(--ts);font-size:13px;font-weight:600;border-left:1.5px solid var(--bdr)}
 .hint{font-size:12px;color:var(--ts);display:flex;align-items:center;gap:5px;margin-bottom:12px}
 
-/* ── QUEUE ── */
+/* QUEUE */
 .ql{display:flex;flex-direction:column}
 .qi{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(214,230,245,.5)}
 .qi:last-child{border-bottom:none}
@@ -171,7 +164,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .qe{text-align:center;padding:28px 20px;color:var(--ts)}
 .qe i{font-size:36px;display:block;margin-bottom:8px;opacity:.2}
 
-/* ── LAKE GRID ── */
+/* LAKE GRID */
 .lgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .lbtn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 8px;border:1.5px solid var(--bdr);border-radius:var(--r);background:none;cursor:pointer;font-family:'Outfit',sans-serif;transition:all var(--t);text-align:center;position:relative;user-select:none}
 .lbtn i{font-size:24px;color:var(--ts);transition:color var(--t)}
@@ -181,7 +174,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .lbtn.cab:hover,.lbtn.cab.on{border-color:var(--aqua);background:rgba(0,201,177,.06)}.lbtn.cab:hover i,.lbtn.cab.on i{color:var(--aqua)}
 .lon{position:absolute;top:-8px;right:-6px;background:var(--green);color:#fff;font-size:10px;font-weight:800;padding:1px 7px;border-radius:20px}
 
-/* ── TABLE ── */
+/* TABLES */
 .tbl{width:100%;border-collapse:collapse}
 .tbl th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ts);padding:8px 12px;text-align:left;border-bottom:1.5px solid var(--bdr)}
 .tbl td{padding:10px 12px;font-size:13.5px;border-bottom:1px solid rgba(214,230,245,.4)}
@@ -189,57 +182,45 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .num{font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;font-weight:500}
 .num.hi{color:var(--blue);font-weight:700}
 .tbl .tot td{font-weight:700;background:var(--sky)}
-.pill{display:inline-block;font-size:11px;padding:2px 9px;border-radius:5px;font-weight:700}
-.pill.ok{background:rgba(30,200,122,.12);color:var(--green)}.pill.pe{background:rgba(245,166,35,.12);color:var(--gold)}.pill.no{background:rgba(232,68,90,.1);color:var(--red)}
 
-/* ── QUICK LINKS ── */
+/* QUICK LINKS */
 .qlk{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1.5px solid var(--bdr);border-radius:var(--rs);color:var(--tm);font-size:13.5px;font-weight:500;cursor:pointer;transition:all var(--t);margin-bottom:8px;user-select:none}
 .qlk:last-child{margin-bottom:0}
 .qlk:hover{border-color:var(--blue);color:var(--blue);background:var(--sky)}
 .qlk i{font-size:15px;width:18px;text-align:center}
 .qlk .arr{margin-left:auto;font-size:12px;opacity:.4}
 
-/* ── ACTIVITY ── */
-.ae{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(214,230,245,.5)}
-.ae:last-child{border-bottom:none}
-.adt{width:48px;height:48px;border-radius:12px;background:var(--sky);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
-.adt strong{font-size:16px;font-weight:800;color:var(--nm);line-height:1}
-.adt span{font-size:9.5px;color:var(--ts);text-transform:uppercase;font-weight:700}
-
-/* ── MODAL ── */
-.modal-bg{position:fixed;inset:0;background:rgba(11,30,61,.55);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
-.modal{background:var(--w);border-radius:var(--r);padding:28px 24px;max-width:380px;width:100%;box-shadow:var(--shm);animation:pop .2s cubic-bezier(.34,1.56,.64,1)}
-@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-.modal-title{font-size:17px;font-weight:800;margin-bottom:6px}
-.modal-sub{font-size:13.5px;color:var(--ts);margin-bottom:20px}
-
-/* ── BANNER ── */
+/* BANNER */
 .banner{background:linear-gradient(135deg,var(--aqua),var(--blue));border-radius:var(--r);padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;color:#fff;cursor:pointer;transition:opacity var(--t)}
 .banner:hover{opacity:.9}
-.banner i{font-size:28px;flex-shrink:0}
+.banner i{font-size:26px;flex-shrink:0}
 .banner h3{font-size:15px;font-weight:800;margin-bottom:2px}
 .banner p{font-size:12.5px;opacity:.85}
 .banner .arr{margin-left:auto;font-size:20px;opacity:.7}
 
-/* ── INACTIVITY WARNING ── */
-.inact-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gold);color:#fff;padding:13px 22px;border-radius:30px;font-size:14px;font-weight:700;z-index:8000;opacity:0;transition:all .3s ease;white-space:nowrap;box-shadow:var(--shm);display:flex;align-items:center;gap:9px}
-.inact-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* CHART */
+.cw{position:relative;height:220px}
 
-/* ── TOAST ── */
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(11,30,61,.55);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal{background:var(--w);border-radius:var(--r);padding:28px 24px;max-width:380px;width:100%;box-shadow:var(--shm);animation:pop .2s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+
+/* INACTIVITY */
+.inact-warn{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gold);color:#fff;padding:13px 22px;border-radius:30px;font-size:14px;font-weight:700;z-index:8000;opacity:0;transition:all .3s ease;pointer-events:none;box-shadow:var(--shm);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.inact-warn.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;padding:12px 20px;border-radius:var(--r);font-size:13.5px;font-weight:600;z-index:5000;display:flex;align-items:center;gap:9px;box-shadow:var(--shm);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:320px}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.ok{border-left:4px solid var(--green)}.toast.err{border-left:4px solid var(--red)}.toast.info{border-left:4px solid var(--blue)}
 
-/* ── CHARTS ── */
-.cw{position:relative;height:220px}
-
-/* ── ANIMS ── */
+/* ANIMS */
 @keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .sc:nth-child(1){animation-delay:.04s}.sc:nth-child(2){animation-delay:.09s}.sc:nth-child(3){animation-delay:.14s}.sc:nth-child(4){animation-delay:.19s}
 
 footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid var(--bdr);background:var(--w);margin-top:auto}
 
-/* ── RESPONSIVE ── */
 @media(max-width:768px){
   .sb{transform:translateX(-100%)}.sb.open{transform:translateX(0)}.sb-ov.show{display:block}
   .main{margin-left:0}.g2,.g3{grid-template-columns:1fr}.cs2{grid-column:span 1}
@@ -250,16 +231,25 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════ AUTH ══ -->
+<!-- AUTH -->
 <div id="authWrap">
   <div class="auth-card">
-    <div class="auth-logo"><i class="fa-solid fa-water"></i></div>
+
+    <!-- LOGO: legg logo.png eller logo.jpg i samme mappe. Faller tilbake til ikon automatisk. -->
+    <div class="auth-logo-wrap">
+      <img id="authLogoImg" class="auth-logo-img"
+           src="logo.png"
+           onerror="document.getElementById('authLogoImg').style.display='none';document.getElementById('authLogoIcon').style.display='flex'"
+           alt="SVSK logo">
+      <div id="authLogoIcon" class="auth-logo-icon" style="display:none"><i class="fa-solid fa-water"></i></div>
+    </div>
+
     <div class="auth-title">Slåstad Vannskiklubb</div>
-    <div class="auth-sub">Logg inn for å bruke kjørelisten og se aktiviteten din</div>
+    <div class="auth-sub">Logg inn for å bruke kjørelisten</div>
 
     <div class="atabs">
       <div class="atab active" id="atab-login" onclick="switchTab('login')">Logg inn</div>
-      <div class="atab" id="atab-reg" onclick="switchTab('reg')">Registrer deg</div>
+      <div class="atab" id="atab-reg"   onclick="switchTab('reg')">Registrer deg</div>
     </div>
 
     <!-- LOGIN -->
@@ -267,12 +257,12 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
       <div class="auth-err" id="err-login"><i class="fa-solid fa-circle-xmark"></i><span id="err-login-txt"></span></div>
       <div class="fg"><label>E-postadresse</label><input type="email" id="l-email" placeholder="din@epost.no" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <div class="fg"><label>Passord</label><input type="password" id="l-pw" placeholder="Passord" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <button class="btn bp bfu" id="loginBtn" onclick="doLogin()" style="margin-bottom:4px"><i class="fa-solid fa-arrow-right-to-bracket"></i> Logg inn</button>
-      <div style="text-align:right;margin-bottom:14px"><span style="font-size:12px;color:var(--blue);cursor:pointer" onclick="doForgotPw()">Glemt passord?</span></div>
+      <button class="btn bp bfu" id="loginBtn" onclick="doLogin()" style="margin-bottom:6px"><i class="fa-solid fa-arrow-right-to-bracket"></i> Logg inn</button>
+      <div style="text-align:right;margin-bottom:14px"><span style="font-size:12px;color:var(--blue);cursor:pointer;font-weight:600" onclick="doForgotPw()">Glemt passord?</span></div>
       <div class="divider">eller</div>
-      <button class="btn b-google bfu" onclick="doGoogle()">
+      <button class="btn b-google bfu" onclick="doGoogle()" style="justify-content:center;gap:10px">
         <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-        Logg inn med Google
+        Fortsett med Google
       </button>
     </div>
 
@@ -285,7 +275,7 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
       <div class="fg"><label>Bekreft passord</label><input type="password" id="r-pw2" placeholder="Gjenta passord" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
       <button class="btn bp bfu" onclick="doRegister()" style="margin-bottom:14px"><i class="fa-solid fa-user-plus"></i> Opprett konto</button>
       <div class="divider">eller</div>
-      <button class="btn b-google bfu" onclick="doGoogle()">
+      <button class="btn b-google bfu" onclick="doGoogle()" style="justify-content:center;gap:10px">
         <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
         Registrer med Google
       </button>
@@ -297,7 +287,7 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ LOADING ══ -->
+<!-- LOADING -->
 <div id="loadWrap" style="display:none">
   <div style="text-align:center">
     <div class="spinner"></div>
@@ -305,17 +295,22 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════ MAIN APP ══ -->
+<!-- SIDEBAR -->
 <aside class="sb" id="sb" style="display:none">
   <div class="sb-logo" onclick="go('dashboard')">
-    <div class="sb-ico"><i class="fa-solid fa-water"></i></div>
+    <!-- Logo i hjørnet: legg logo.png/logo.jpg i samme mappe -->
+    <img id="sbLogoImg" class="sb-logo-img"
+         src="logo.png"
+         onerror="document.getElementById('sbLogoImg').style.display='none';document.getElementById('sbLogoIcon').style.display='flex'"
+         alt="logo">
+    <div id="sbLogoIcon" class="sb-logo-icon"><i class="fa-solid fa-water"></i></div>
     <div><strong>Slåstad VS</strong><span>Vannskiklubb</span></div>
   </div>
   <div class="sb-user">
     <div class="sb-av" id="sbAv">?</div>
     <div>
       <span class="sb-uname" id="sbName" onclick="go('konto')">Laster...</span>
-      <span class="sb-logout" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:3px;font-size:10px"></i>Logg ut</span>
+      <span class="sb-logout" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket" style="font-size:10px;margin-right:3px"></i>Logg ut</span>
     </div>
   </div>
   <nav class="sb-nav">
@@ -330,14 +325,14 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
     <div class="ndiv"></div>
     <div class="sb-sec">Min konto</div>
     <div class="na" onclick="go('aktivitet')" id="nav-aktivitet"><i class="fa-solid fa-bolt"></i> Din aktivitet</div>
-    <div class="na" onclick="go('konto')" id="nav-konto"><i class="fa-regular fa-user"></i> Din kontoside</div>
-    <div class="na" onclick="go('stripe')" id="nav-stripe"><i class="fa-solid fa-coins"></i> Overfør penger</div>
+    <div class="na" onclick="go('konto')"     id="nav-konto"><i class="fa-regular fa-user"></i> Din kontoside</div>
+    <div class="na" onclick="go('stripe')"    id="nav-stripe"><i class="fa-solid fa-coins"></i> Overfør penger</div>
     <div class="ndiv"></div>
     <div class="na boat" onclick="window.open('svsk_batkjorer.html','_blank')">
       <i class="fa-solid fa-ship"></i> Båtkjørerside <span class="nb g">LIVE</span>
     </div>
     <div class="ndiv"></div>
-    <!-- Andre servicer accordion -->
+    <!-- Andre servicer -->
     <div class="as-btn" id="asBtn" onclick="toggleAS()">
       <i class="fa-solid fa-grid-2" style="width:16px;text-align:center;font-size:14px"></i>
       Andre servicer
@@ -356,6 +351,7 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
 </aside>
 <div class="sb-ov" id="sbOv" onclick="closeSb()"></div>
 
+<!-- MAIN APP -->
 <div class="main" id="mainApp" style="display:none">
   <header class="top">
     <button class="menu-btn" onclick="openSb()"><i class="fa-solid fa-bars"></i></button>
@@ -365,25 +361,38 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
     <div class="topr">
       <div class="tbi aqua" onclick="window.open('svsk_batkjorer.html','_blank')" title="Båtkjørerside"><i class="fa-solid fa-ship"></i></div>
       <div class="tbi" onclick="go('stripe')" title="Fyll på konto"><i class="fa-solid fa-coins"></i></div>
-      <div class="tbi" onclick="go('konto')" title="Min konto"><i class="fa-regular fa-circle-user"></i></div>
+      <div class="tbi" onclick="go('konto')"  title="Min konto"><i class="fa-regular fa-circle-user"></i></div>
     </div>
   </header>
   <div class="cnt" id="app"></div>
-  <footer>Copyright © 2004–2026 <strong>WaterskiQueue / Slåstad Vannskiklubb</strong> · Alle rettigheter forbeholdt</footer>
+  <footer>Copyright © 2004–2026 <strong>WaterskiQueue / Slåstad Vannskiklubb</strong></footer>
 </div>
 
 <div class="toast" id="toast"></div>
-<div class="inact-toast" id="inactToast"><i class="fa-solid fa-clock"></i> Du logges ut om 1 minutt grunnet inaktivitet</div>
+<div class="inact-warn" id="inactWarn"><i class="fa-solid fa-clock"></i> Du logges ut om 1 minutt (inaktivitet)</div>
 
-<!-- ════════════════════════════════════════════════════ SCRIPT ══ -->
 <script>
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  PRIS-KONFIGURASJON – endre dette for å justere kjøreprisen ║
+   ╠══════════════════════════════════════════════════════════════╣
+   ║  PRIS_PER_MIN : kr per minutt på vannet                     ║
+   ║  MIN_PRIS     : minimum å betale uansett varighet           ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+const PRIS = {
+  PER_MIN:  12,    // ← ENDRE HER: kr per minutt
+  MIN_PRIS: 20,    // ← ENDRE HER: minimum pris per tur (kr)
+};
+
+function calcPris(durationMs) {
+  const minutter = durationMs / 60000;
+  return Math.max(PRIS.MIN_PRIS, Math.round(minutter * PRIS.PER_MIN));
+}
 
 /* ╔══════════════════════════════════════════════════════════════╗
-   ║  FIREBASE CONFIG – BYTT UT MED DINE EGNE VERDIER!           ║
-   ║  Se kommentaren i <head> for instruksjoner.                  ║
+   ║  FIREBASE CONFIG – bytt ut med dine egne verdier!           ║
    ╚══════════════════════════════════════════════════════════════╝ */
 const FIREBASE_CONFIG = {
-   apiKey:            "AIzaSyD24SH3zwKUWmxxEXlhzuPG9vOoVJ1ymq4",
+apiKey:            "AIzaSyD24SH3zwKUWmxxEXlhzuPG9vOoVJ1ymq4",
   authDomain:        "waterqueue-6a605.firebaseapp.com",
   databaseURL:       "https://ditt-prosjekt-default-rtdb.europe-west1.firebasedatabase.app",
   projectId:         "waterqueue-6a605",
@@ -397,70 +406,64 @@ const auth = firebase.auth();
 const db   = firebase.database();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-/* ═══════════════════ STATE ═══════════════════════════════════ */
-let me       = null;   // Firebase User
-let udata    = null;   // user data from DB
-let queues   = {1:[],2:[],3:[]};
-let activePage = 'dashboard';
-let activeParams = {};
-
-/* ═══════════════════ INACTIVITY (10 min) ════════════════════ */
-const INACTIVE_MS   = 10 * 60 * 1000;
-const WARN_BEFORE   =  1 * 60 * 1000;
-let lastActive = Date.now();
-let inactWarnShown = false;
-
+/* ═══════════════ INAKTIVITET (10 min) ════════════════════════ */
+const INACTIVE_MS = 10 * 60 * 1000;
+const WARN_MS     =  9 * 60 * 1000;
+let lastActive = Date.now(), warnShown = false;
 function resetActivity(){
   lastActive = Date.now();
-  if(inactWarnShown){ inactWarnShown=false; document.getElementById('inactToast').classList.remove('show'); }
+  if(warnShown){ warnShown=false; document.getElementById('inactWarn').classList.remove('show'); }
 }
-['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(e=>document.addEventListener(e,resetActivity,{passive:true}));
-
+['mousedown','keydown','scroll','touchstart','click'].forEach(e=>document.addEventListener(e,resetActivity,{passive:true}));
 setInterval(()=>{
   if(!me) return;
-  const idle = Date.now() - lastActive;
-  if(idle >= INACTIVE_MS){
-    toast('Du ble logget ut grunnet inaktivitet','info',4000);
-    setTimeout(()=>auth.signOut(), 1500);
-  } else if(idle >= INACTIVE_MS - WARN_BEFORE && !inactWarnShown){
-    inactWarnShown = true;
-    document.getElementById('inactToast').classList.add('show');
-    setTimeout(()=>{ document.getElementById('inactToast').classList.remove('show'); inactWarnShown=false; }, 8000);
-  }
-}, 20000);
+  const idle=Date.now()-lastActive;
+  if(idle>=INACTIVE_MS){ toast('Logget ut grunnet inaktivitet','info',4000); setTimeout(()=>auth.signOut(),1500); }
+  else if(idle>=WARN_MS && !warnShown){ warnShown=true; document.getElementById('inactWarn').classList.add('show'); }
+}, 30000);
 
-/* ═══════════════════ AUTH STATE ══════════════════════════════ */
-auth.onAuthStateChanged(user => {
-  if(user){
-    me = user;
-    showLoad();
-    loadUserAndListen(user);
-  } else {
-    me = null; udata = null;
-    showAuth();
+/* ═══════════════ GLOBALS ═════════════════════════════════════ */
+let me=null, udata=null;
+let queues={1:[],2:[],3:[]};
+let activePage='dashboard', activeParams={};
+
+/* ═══════════════ GOOGLE AUTH (redirect – virker alltid) ══════ */
+// Sjekk om vi kommer tilbake fra Google-redirect
+auth.getRedirectResult().then(async result => {
+  if(!result.user) return;
+  const u=result.user;
+  const snap=await db.ref('users/'+u.uid).once('value');
+  if(!snap.exists()){
+    await db.ref('users/'+u.uid).set(defaultUserData(u.displayName||u.email.split('@')[0], u.email));
   }
+}).catch(e=>{ if(e.code!=='auth/no-current-user') console.error('redirect result error',e); });
+
+/* ═══════════════ AUTH STATE ══════════════════════════════════ */
+auth.onAuthStateChanged(user=>{
+  if(user){ me=user; showLoad(); loadUser(user); }
+  else { me=null; udata=null; showAuth(); }
 });
 
-/* ═══════════════════ AUTH UI ═════════════════════════════════ */
+/* ═══════════════ AUTH FORMS ═══════════════════════════════════ */
 function switchTab(t){
   ['login','reg'].forEach(x=>{
-    document.getElementById('atab-'+x).classList.toggle('active', x===t);
-    document.getElementById('form-'+x).style.display = x===t ? 'block' : 'none';
+    document.getElementById('atab-'+x).classList.toggle('active',x===t);
+    document.getElementById('form-'+x).style.display=x===t?'block':'none';
   });
+  document.getElementById('err-login').style.display='none';
+  document.getElementById('err-reg').style.display='none';
 }
-
-function authErr(form,msg){
+function showErr(form,msg){
   const el=document.getElementById('err-'+form);
   document.getElementById('err-'+form+'-txt').textContent=msg;
   el.style.display='flex';
 }
-function authErrHide(form){ document.getElementById('err-'+form).style.display='none'; }
 
 async function doLogin(){
-  authErrHide('login');
+  document.getElementById('err-login').style.display='none';
   const email=document.getElementById('l-email').value.trim();
   const pw=document.getElementById('l-pw').value;
-  if(!email||!pw){ authErr('login','Fyll ut e-post og passord'); return; }
+  if(!email||!pw){ showErr('login','Fyll ut e-post og passord'); return; }
   const btn=document.getElementById('loginBtn');
   btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Logger inn...';
   btn.disabled=true;
@@ -469,202 +472,133 @@ async function doLogin(){
   } catch(e){
     btn.innerHTML='<i class="fa-solid fa-arrow-right-to-bracket"></i> Logg inn';
     btn.disabled=false;
-    const msgs={
-      'auth/user-not-found':'Ingen bruker med denne e-posten',
-      'auth/wrong-password':'Feil passord',
-      'auth/invalid-email':'Ugyldig e-postadresse',
-      'auth/too-many-requests':'For mange forsøk – prøv igjen om litt',
-      'auth/invalid-credential':'Feil e-post eller passord'
-    };
-    authErr('login', msgs[e.code]||'Kunne ikke logge inn');
+    const msgs={'auth/user-not-found':'Ingen bruker med denne e-posten','auth/wrong-password':'Feil passord','auth/invalid-email':'Ugyldig e-postadresse','auth/too-many-requests':'For mange forsøk – vent litt','auth/invalid-credential':'Feil e-post eller passord'};
+    showErr('login', msgs[e.code]||'Kunne ikke logge inn ('+e.code+')');
   }
 }
 
 async function doRegister(){
-  authErrHide('reg');
-  const name  = document.getElementById('r-name').value.trim();
-  const email = document.getElementById('r-email').value.trim();
-  const pw    = document.getElementById('r-pw').value;
-  const pw2   = document.getElementById('r-pw2').value;
-  if(!name)       { authErr('reg','Skriv inn fullt navn'); return; }
-  if(!email)      { authErr('reg','Skriv inn e-postadresse'); return; }
-  if(pw.length<6) { authErr('reg','Passord må være minst 6 tegn'); return; }
-  if(pw!==pw2)    { authErr('reg','Passordene er ikke like'); return; }
+  document.getElementById('err-reg').style.display='none';
+  const name =document.getElementById('r-name').value.trim();
+  const email=document.getElementById('r-email').value.trim();
+  const pw   =document.getElementById('r-pw').value;
+  const pw2  =document.getElementById('r-pw2').value;
+  if(!name)       { showErr('reg','Skriv inn fullt navn'); return; }
+  if(!email)      { showErr('reg','Skriv inn e-postadresse'); return; }
+  if(pw.length<6) { showErr('reg','Passord må være minst 6 tegn'); return; }
+  if(pw!==pw2)    { showErr('reg','Passordene er ikke like'); return; }
   try {
-    const cred = await auth.createUserWithEmailAndPassword(email,pw);
+    const cred=await auth.createUserWithEmailAndPassword(email,pw);
     await cred.user.updateProfile({displayName:name});
-    // Create fresh user data (balance 0, no trips)
-    await db.ref('users/'+cred.user.uid).set({
-      name, email,
-      balance:0, spent:0,
-      trips:{2025:{slalom:0,hopp:0,wakeboard:0,trick:0,annet:0},
-             2026:{slalom:0,hopp:0,wakeboard:0,trick:0,annet:0}},
-      transactions:[],
-      inQueue:{1:false,2:false,3:false},
-      createdAt: Date.now()
-    });
+    await db.ref('users/'+cred.user.uid).set(defaultUserData(name,email));
   } catch(e){
-    const msgs={
-      'auth/email-already-in-use':'E-posten er allerede registrert',
-      'auth/invalid-email':'Ugyldig e-postadresse',
-      'auth/weak-password':'Passordet er for svakt'
-    };
-    authErr('reg', msgs[e.code]||'Kunne ikke opprette konto');
+    const msgs={'auth/email-already-in-use':'E-posten er allerede registrert','auth/invalid-email':'Ugyldig e-postadresse','auth/weak-password':'Passordet er for svakt'};
+    showErr('reg', msgs[e.code]||'Kunne ikke opprette konto ('+e.code+')');
   }
 }
 
-async function doGoogle(){
-  try {
-    const result = await auth.signInWithPopup(googleProvider);
-    const u = result.user;
-    const snap = await db.ref('users/'+u.uid).once('value');
-    if(!snap.exists()){
-      // First Google login → fresh data
-      await db.ref('users/'+u.uid).set({
-        name: u.displayName||u.email.split('@')[0],
-        email: u.email,
-        balance:0, spent:0,
-        trips:{2025:{slalom:0,hopp:0,wakeboard:0,trick:0,annet:0},
-               2026:{slalom:0,hopp:0,wakeboard:0,trick:0,annet:0}},
-        transactions:[],
-        inQueue:{1:false,2:false,3:false},
-        createdAt: Date.now()
-      });
-    }
-  } catch(e){
-    console.error(e);
-    authErr('login','Google-innlogging feilet – prøv igjen');
-  }
+/* Google – bruker redirect (virker i alle nettlesere, ikke blokkert) */
+function doGoogle(){
+  // Sett en flag så vi vet at redirect er i gang
+  sessionStorage.setItem('googleRedirect','1');
+  auth.signInWithRedirect(googleProvider).catch(e=>{
+    sessionStorage.removeItem('googleRedirect');
+    showErr('login','Google-innlogging feilet: '+e.message);
+  });
 }
 
 async function doForgotPw(){
-  const email = document.getElementById('l-email').value.trim();
-  if(!email){ authErr('login','Skriv inn e-postadressen din over'); return; }
-  try {
-    await auth.sendPasswordResetEmail(email);
-    authErrHide('login');
-    toast('Tilbakestillingslenke sendt til '+email,'ok',5000);
-  } catch(e){
-    authErr('login','Kunne ikke sende e-post');
-  }
+  const email=document.getElementById('l-email').value.trim();
+  if(!email){ showErr('login','Skriv inn e-posten din over'); return; }
+  try { await auth.sendPasswordResetEmail(email); toast('Tilbakestillingslenke sendt til '+email,'ok',5000); }
+  catch(e){ showErr('login','Kunne ikke sende e-post'); }
 }
 
 function doLogout(){
-  showModal(
-    'Logg ut?',
-    `Er du sikker på at du vil logge ut, ${udata?.name?.split(' ')[0]||''}?`,
-    [
-      {label:'Avbryt', cls:'bo', fn:closeModal},
-      {label:'Ja, logg ut', cls:'br', fn:()=>{ closeModal(); auth.signOut(); }}
-    ]
-  );
+  showModal('Logg ut?',`Er du sikker på at du vil logge ut, ${udata?.name?.split(' ')[0]||''}?`,[
+    {label:'Avbryt',cls:'bo',fn:closeModal},
+    {label:'Ja, logg ut',cls:'br',fn:()=>{closeModal();auth.signOut();}}
+  ]);
 }
 
-/* ═══════════════════ USER DATA + LISTENERS ══════════════════ */
-async function loadUserAndListen(user){
+/* ═══════════════ USER DATA ════════════════════════════════════ */
+function defaultUserData(name,email){
+  return {
+    name, email,
+    balance:0, spent:0,
+    trips:{2025:{slalom:0,hopp:0,wakeboard:0,trick:0,annet:0},
+           2026:{slalom:0,hopp:0,wakeboard:0,trick:0,annet:0}},
+    transactions:[],
+    inQueue:{1:false,2:false,3:false},
+    createdAt:Date.now()
+  };
+}
+
+async function loadUser(user){
   try {
-    // User data listener (real-time)
+    // Real-time user data
     db.ref('users/'+user.uid).on('value', snap=>{
       if(!snap.exists()){
-        // Shouldn't happen, but create if missing
-        db.ref('users/'+user.uid).set({
-          name: user.displayName||user.email.split('@')[0],
-          email: user.email,
-          balance:0,spent:0,
-          trips:{2025:{slalom:0,hopp:0,wakeboard:0,trick:0,annet:0},
-                 2026:{slalom:0,hopp:0,wakeboard:0,trick:0,annet:0}},
-          transactions:[],inQueue:{1:false,2:false,3:false},createdAt:Date.now()
-        });
+        db.ref('users/'+user.uid).set(defaultUserData(user.displayName||user.email.split('@')[0], user.email));
         return;
       }
-      udata = snap.val();
-      // Ensure nested fields exist
-      if(!udata.trips) udata.trips = {2025:{},2026:{}};
-      if(!udata.inQueue) udata.inQueue = {1:false,2:false,3:false};
-      if(!udata.transactions) udata.transactions = [];
-      updateSidebarUser();
-      if(document.getElementById('mainApp').style.display!=='none') renderIfNeeded();
+      udata=snap.val();
+      if(!udata.trips)        udata.trips={2025:{},2026:{}};
+      if(!udata.inQueue)      udata.inQueue={1:false,2:false,3:false};
+      if(!udata.transactions) udata.transactions=[];
+      updateSbUser();
+      if(document.getElementById('mainApp').style.display!=='none') render();
     });
 
-    // Global queue listener (real-time, all users see same queue)
+    // Real-time queue (shared across all users/devices)
     db.ref('queue').on('value', snap=>{
-      queues = {1:[],2:[],3:[]};
+      queues={1:[],2:[],3:[]};
       if(snap.exists()){
-        const val = snap.val();
+        const v=snap.val();
         [1,2,3].forEach(n=>{
-          if(val[n]){
-            // Firebase stores pushed items as objects keyed by push ID
-            queues[n] = Object.entries(val[n]).map(([k,v])=>({...v,_key:k}));
-            queues[n].sort((a,b)=>(a.timestamp||0)-(b.timestamp||0));
-          }
+          if(v[n]) queues[n]=Object.entries(v[n]).map(([k,e])=>({...e,_key:k})).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0));
         });
       }
       updateBadges();
-      if(activePage==='dashboard'||activePage==='kjoreliste'||activePage==='kjoreliste-velg') render();
+      if(['dashboard','kjoreliste','kjoreliste-velg'].includes(activePage)) render();
     });
 
-    // Completed trips listener
-    db.ref('completedTrips').limitToLast(50).on('value', snap=>{
-      if(document.getElementById('mainApp').style.display!=='none' && 
-        (activePage==='aktivitet'||activePage==='dashboard')) render();
-    });
-
-    hideLoad();
-    showMainApp();
-    go('dashboard');
-    resetActivity();
+    hideLoad(); showMainApp(); go('dashboard'); resetActivity();
   } catch(e){
-    console.error('loadUserAndListen error',e);
-    hideLoad();
-    toast('Feil ved innlasting – prøv igjen','err');
-    auth.signOut();
+    console.error(e); hideLoad();
+    toast('Feil ved innlasting','err'); auth.signOut();
   }
 }
 
-function updateSidebarUser(){
-  if(!udata||!me) return;
-  const name = udata.name||me.email.split('@')[0];
-  document.getElementById('sbName').textContent = name;
-  const initials = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-  document.getElementById('sbAv').textContent = initials;
-}
+function saveUser(updates){ if(!me) return; db.ref('users/'+me.uid).update(updates); }
 
-function saveUser(updates){
-  if(!me) return;
-  db.ref('users/'+me.uid).update(updates);
-}
+/* ═══════════════ QUEUE ════════════════════════════════════════ */
+function getQ(n){ return queues[n]||[]; }
+function amIn(n){ return udata?.inQueue?.[n]===true; }
+function qLen(n){ return getQ(n).length; }
 
-/* ═══════════════════ QUEUE HELPERS ══════════════════════════ */
-function getQueue(sjo){ return queues[sjo]||[]; }
-function amInQueue(sjo){ return udata?.inQueue?.[sjo]===true; }
-
-function qLen(sjo){ return getQueue(sjo).length; }
-
-function joinQueue(sjo, disc){
+function joinQueue(sjo,disc){
   if(!me||!udata) return;
-  if((udata.balance||0)<110){ toast('For lav saldo – fyll på konto!','err'); return; }
-  const entry = {
+  db.ref('queue/'+sjo).push({
     userId: me.uid,
-    name: udata.name||me.email.split('@')[0],
-    disc: disc,
+    name:   udata.name||me.email.split('@')[0],
+    disc,
     timestamp: firebase.database.ServerValue.TIMESTAMP,
     addedAt: new Date().toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit'})
-  };
-  db.ref('queue/'+sjo).push(entry);
+  });
   saveUser({[`inQueue/${sjo}`]:true});
   toast(`Påmeldt Sjø ${sjo} – ${disc}!`,'ok');
 }
 
 function leaveQueue(sjo){
   if(!me) return;
-  const q = getQueue(sjo);
-  const mine = q.find(x=>x.userId===me.uid);
-  if(mine){ db.ref(`queue/${sjo}/${mine._key}`).remove(); }
+  const mine=getQ(sjo).find(x=>x.userId===me.uid);
+  if(mine) db.ref(`queue/${sjo}/${mine._key}`).remove();
   saveUser({[`inQueue/${sjo}`]:false});
   toast(`Fjernet fra Sjø ${sjo}`,'info');
 }
 
-/* ═══════════════════ UI HELPERS ═════════════════════════════ */
+/* ═══════════════ UI HELPERS ═══════════════════════════════════ */
 function showAuth(){ document.getElementById('authWrap').style.display='flex'; document.getElementById('loadWrap').style.display='none'; document.getElementById('sb').style.display='none'; document.getElementById('mainApp').style.display='none'; }
 function showLoad(){ document.getElementById('authWrap').style.display='none'; document.getElementById('loadWrap').style.display='flex'; document.getElementById('sb').style.display='none'; document.getElementById('mainApp').style.display='none'; }
 function hideLoad(){ document.getElementById('loadWrap').style.display='none'; }
@@ -672,61 +606,49 @@ function showMainApp(){ document.getElementById('authWrap').style.display='none'
 
 function openSb(){ document.getElementById('sb').classList.add('open'); document.getElementById('sbOv').classList.add('show'); }
 function closeSb(){ document.getElementById('sb').classList.remove('open'); document.getElementById('sbOv').classList.remove('show'); }
+function toggleAS(){ document.getElementById('asBtn').classList.toggle('open'); document.getElementById('asSub').classList.toggle('open'); }
 
-function toggleAS(){
-  const btn=document.getElementById('asBtn'), sub=document.getElementById('asSub');
-  btn.classList.toggle('open'); sub.classList.toggle('open');
+function updateSbUser(){
+  if(!udata||!me) return;
+  const name=udata.name||me.email.split('@')[0];
+  document.getElementById('sbName').textContent=name;
+  document.getElementById('sbAv').textContent=name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+}
+
+function updateBadges(){
+  [1,2,3].forEach(n=>{
+    const l=qLen(n);
+    const b=document.getElementById('b'+n); if(b) b.textContent=l;
+    const d=document.getElementById('dot'+n); if(d) d.className='qdot'+(l>3?' busy':l>0?' live':'');
+    const p=document.getElementById('pt'+n); if(p) p.textContent=`Sjø ${n} · ${l}`;
+  });
 }
 
 function toast(msg,type='ok',dur=2800){
   const t=document.getElementById('toast');
   t.innerHTML=`<i class="fa-solid fa-${type==='ok'?'check-circle':type==='err'?'circle-xmark':'info-circle'}"></i> ${msg}`;
   t.className='toast '+type+' show';
-  clearTimeout(t._t); t._t=setTimeout(()=>{t.className='toast '+type;},dur);
+  clearTimeout(t._t); t._t=setTimeout(()=>t.className='toast '+type,dur);
 }
 
 let _modal=null;
 function showModal(title,sub,actions){
   closeModal();
-  const el=document.createElement('div');
-  el.className='modal-bg'; el.id='_modal';
-  el.innerHTML=`<div class="modal">
-    <div class="modal-title">${title}</div>
-    <div class="modal-sub">${sub}</div>
-    <div style="display:flex;gap:10px">
-      ${actions.map((a,i)=>`<button class="btn ${a.cls}" style="flex:1" id="_ma${i}">${a.label}</button>`).join('')}
-    </div>
-  </div>`;
-  document.body.appendChild(el);
+  const el=document.createElement('div'); el.className='modal-bg'; el.id='_m';
+  el.innerHTML=`<div class="modal"><div style="font-size:17px;font-weight:800;margin-bottom:6px">${title}</div><div style="font-size:13.5px;color:var(--ts);margin-bottom:20px">${sub}</div><div style="display:flex;gap:10px">${actions.map((a,i)=>`<button class="btn ${a.cls}" style="flex:1" id="_ma${i}">${a.label}</button>`).join('')}</div></div>`;
+  document.body.appendChild(el); _modal=el;
   actions.forEach((a,i)=>document.getElementById('_ma'+i).onclick=a.fn);
-  _modal=el;
 }
 function closeModal(){ if(_modal){_modal.remove();_modal=null;} }
 
-/* ═══════════════════ BADGES ═════════════════════════════════ */
-function updateBadges(){
-  [1,2,3].forEach(n=>{
-    const l=qLen(n);
-    const b=document.getElementById('b'+n);
-    if(b) b.textContent=l;
-    const d=document.getElementById('dot'+n);
-    if(d) d.className='qdot'+(l>0?' live':'');
-    if(l>3&&d) d.className='qdot busy';
-    const pt=document.getElementById('pt'+n);
-    if(pt) pt.textContent=`Sjø ${n} · ${l}`;
-  });
-}
-
-/* ═══════════════════ ROUTER ═════════════════════════════════ */
+/* ═══════════════ ROUTER ═══════════════════════════════════════ */
 function go(page,params={}){
   activePage=page; activeParams=params;
   document.querySelectorAll('.na').forEach(a=>a.classList.remove('active'));
   const key=page==='kjoreliste'?`kjoreliste-${params.sjo||1}`:page;
   const el=document.getElementById('nav-'+key)||document.getElementById('nav-'+page);
   if(el) el.classList.add('active');
-  render();
-  window.scrollTo({top:0,behavior:'smooth'});
-  closeSb();
+  render(); window.scrollTo({top:0,behavior:'smooth'}); closeSb();
 }
 
 function render(){
@@ -737,97 +659,70 @@ function render(){
   else if(p==='kjoreliste') app.innerHTML=pgQueue(activeParams.sjo||1);
   else if(p==='kjoreliste-velg') app.innerHTML=pgQueueVelg();
   else if(p==='konto')      app.innerHTML=pgKonto();
-  else if(p==='aktivitet')  app.innerHTML=pgAktivitet();
+  else if(p==='aktivitet')  { app.innerHTML=pgAktivitet(); loadTrips(); }
   else if(p==='stripe')     app.innerHTML=pgStripe();
   else app.innerHTML=`<div class="ph"><h1>${p}</h1><p>Under utvikling.</p></div>`;
-  afterRender();
+  if(p==='dashboard') setTimeout(initDashChart,60);
   updateBadges();
 }
 
-function renderIfNeeded(){
-  if(document.getElementById('mainApp').style.display!=='none') render();
-}
+/* ═══════════════ HELPERS ══════════════════════════════════════ */
+function total(yr){ const t=(udata.trips||{})[yr]||{}; return(t.slalom||0)+(t.hopp||0)+(t.wakeboard||0)+(t.trick||0)+(t.annet||0); }
+function discPill(d){ const m={Slalom:'S',Trick:'T',Hopp:'H',Wakeboard:'W'}; return`<span class="qd ${m[d]||'A'}">${d||'Annet'}</span>`; }
+function fmtMs(ms){ if(!ms)return'–'; const s=Math.floor(ms/1000),m=Math.floor(s/60),sec=s%60; return`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; }
+function todayStr(){ return new Date().toLocaleDateString('no-NO'); }
 
-function afterRender(){
-  if(activePage==='dashboard') setTimeout(initDashChart,60);
-}
+/* ═══════════════ PAGES ════════════════════════════════════════ */
 
-/* ═══════════════════ HELPERS ════════════════════════════════ */
-function total(yr){
-  const t=(udata.trips||{})[yr]||{};
-  return(t.slalom||0)+(t.hopp||0)+(t.wakeboard||0)+(t.trick||0)+(t.annet||0);
-}
-function discPill(d){
-  const m={Slalom:'S',Trick:'T',Hopp:'H',Wakeboard:'W'};
-  return`<span class="qd ${m[d]||'A'}">${d||'Annet'}</span>`;
-}
-function fmtMs(ms){
-  if(!ms) return'–';
-  const s=Math.floor(ms/1000),m=Math.floor(s/60),sec=s%60;
-  return`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-}
-function todayStr(){
-  return new Date().toLocaleDateString('no-NO',{day:'2-digit',month:'2-digit',year:'numeric'});
-}
-
-/* ═══════════════════ PAGES ══════════════════════════════════ */
-
-/* ─── DASHBOARD ─── */
+/* ─ DASHBOARD ─ */
 function pgDash(){
-  const inQ=[1,2,3].filter(n=>amInQueue(n));
+  const inQ=[1,2,3].filter(n=>amIn(n));
   const bal=udata.balance||0;
   return`
-<div class="ph"><h1>God dag, ${(udata.name||me.email).split(' ')[0]} 👋</h1><p>Her er oversikten din — oppdateres i sanntid på alle enheter</p></div>
-
-${inQ.length?`<div style="background:rgba(0,201,177,.1);border:1.5px solid var(--aqua);border-radius:var(--r);padding:12px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;font-size:13.5px;color:var(--tm)"><i class="fa-solid fa-person-swimming" style="color:var(--aqua);font-size:20px"></i><span>Du er på køen: ${inQ.map(n=>'<strong>Sjø '+n+'</strong>').join(', ')} – God tur! 🌊</span></div>`:''}
-
+<div class="ph"><h1>God dag, ${(udata.name||me.email).split(' ')[0]} 👋</h1>
+<p>Her er oversikten din · Live på alle enheter · <strong style="color:var(--blue)">${PRIS.PER_MIN} kr/min</strong></p></div>
+${inQ.length?`<div style="background:rgba(0,201,177,.1);border:1.5px solid var(--aqua);border-radius:var(--r);padding:12px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;font-size:13.5px"><i class="fa-solid fa-person-swimming" style="color:var(--aqua);font-size:20px"></i><span>Du er på køen: ${inQ.map(n=>'<strong>Sjø '+n+'</strong>').join(', ')} – God tur! 🌊</span></div>`:''}
 <div class="banner" onclick="window.open('svsk_batkjorer.html','_blank')">
   <i class="fa-solid fa-ship"></i>
-  <div><h3>Båtkjørerside</h3><p>Åpne kjørerpanelet med live-timer og køstyring</p></div>
+  <div><h3>Båtkjørerside</h3><p>Live-timer, køstyring og prisbregning per minutt</p></div>
   <i class="fa-solid fa-arrow-right arr"></i>
 </div>
-
 <div class="sr">
-  <div class="sc ab"><div class="sch"><div class="scl">Tilgode</div><div class="sci bl"><i class="fa-solid fa-wallet"></i></div></div><div class="scv">${bal} kr</div><div class="scs">${bal<110?'<span style="color:var(--red)">For lav til tur</span>':Math.floor(bal/110)+' turer igjen'}</div></div>
-  <div class="sc aa"><div class="sch"><div class="scl">Turer i år</div><div class="sci aq"><i class="fa-solid fa-person-skiing-nordic"></i></div></div><div class="scv">${total(2026)}</div><div class="scs">2026 – Sjø 1,2,3</div></div>
-  <div class="sc ag"><div class="sch"><div class="scl">På liste nå</div><div class="sci go"><i class="fa-solid fa-list-ol"></i></div></div><div class="scv">${qLen(1)+qLen(2)+qLen(3)}</div><div class="scs">Sjø 1: ${qLen(1)} · Sjø 2: ${qLen(2)} · Sjø 3: ${qLen(3)}</div></div>
-  <div class="sc an"><div class="sch"><div class="scl">Brukt i år</div><div class="sci gr"><i class="fa-solid fa-coins"></i></div></div><div class="scv">${udata.spent||0} kr</div><div class="scs">Ca ${total(2026)} turer á 110 kr</div></div>
+  <div class="sc ab"><div class="sch"><div class="scl">Tilgode</div><div class="sci bl"><i class="fa-solid fa-wallet"></i></div></div><div class="scv">${bal} kr</div><div class="scs">${bal<PRIS.MIN_PRIS?'<span style="color:var(--red)">Fyll på konto</span>':'Klar til å kjøre'}</div></div>
+  <div class="sc aa"><div class="sch"><div class="scl">Turer i år</div><div class="sci aq"><i class="fa-solid fa-person-skiing-nordic"></i></div></div><div class="scv">${total(2026)}</div><div class="scs">2026</div></div>
+  <div class="sc ag"><div class="sch"><div class="scl">På liste nå</div><div class="sci go"><i class="fa-solid fa-list-ol"></i></div></div><div class="scv">${qLen(1)+qLen(2)+qLen(3)}</div><div class="scs">Sjø 1:${qLen(1)} · Sjø 2:${qLen(2)} · Sjø 3:${qLen(3)}</div></div>
+  <div class="sc an"><div class="sch"><div class="scl">Pris per min</div><div class="sci gr"><i class="fa-solid fa-stopwatch"></i></div></div><div class="scv">${PRIS.PER_MIN} kr</div><div class="scs">Min. ${PRIS.MIN_PRIS} kr per tur</div></div>
 </div>
-
 <div class="g3">
   <div class="card">
     <div class="ch"><div class="ct"><i class="fa-solid fa-credit-card"></i> Fyll på konto</div></div>
     <div class="cb">
       <div class="fg"><label>Beløp (min 100 kr)</label><div class="ig"><input type="number" id="fillAmt" min="100" step="50" placeholder="200"><span class="unit">kr</span></div></div>
       <div style="display:flex;gap:6px;margin-bottom:12px">${[100,200,500].map(a=>`<button class="btn bo bsm" onclick="document.getElementById('fillAmt').value=${a}">${a}</button>`).join('')}</div>
-      <p class="hint"><i class="fa-solid fa-lock"></i> BankID eller kort</p>
-      <button class="btn bp" style="width:100%;justify-content:center" onclick="doFill()"><i class="fa-solid fa-bolt"></i> Lad opp!</button>
+      <button class="btn bp bfu" onclick="doFill()"><i class="fa-solid fa-bolt"></i> Lad opp!</button>
     </div>
   </div>
-
   <div class="card">
-    <div class="ch"><div class="ct"><i class="fa-solid fa-list-ol"></i> Meld deg på liste</div></div>
+    <div class="ch"><div class="ct"><i class="fa-solid fa-list-ol"></i> Meld deg på</div></div>
     <div class="cb">
       <div class="fg"><label>Gren</label>
         <select id="dashDisc"><option value="">-- Velg gren --</option><option>Slalom</option><option>Hopp</option><option>Trick</option><option>Wakeboard</option></select>
       </div>
       <div class="lgrid">
-        ${[1,2,3].map(n=>`<button class="lbtn${n===3?' cab':''}${amInQueue(n)?' on':''}" onclick="dashJoinQ(${n})">
-          ${amInQueue(n)?'<span class="lon">✓</span>':''}
+        ${[1,2,3].map(n=>`<button class="lbtn${n===3?' cab':''}${amIn(n)?' on':''}" onclick="dashJoin(${n})">
+          ${amIn(n)?'<span class="lon">✓</span>':''}
           <i class="fa-solid fa-${n===3?'cable-car':'water'}"></i>
-          <strong>Sjø ${n}</strong>
-          <small>${qLen(n)} stk</small>
+          <strong>Sjø ${n}</strong><small>${qLen(n)} stk</small>
         </button>`).join('')}
       </div>
     </div>
   </div>
-
   <div class="card">
     <div class="ch"><div class="ct"><i class="fa-solid fa-chart-bar"></i> Turer per gren</div></div>
     <div class="cb" style="padding:0">
       <table class="tbl"><thead><tr><th>Gren</th><th style="text-align:right">2026</th></tr></thead><tbody>
       ${[['Slalom','person-skiing'],['Hopp','person-falling'],['Wakeboard','person-snowboarding'],['Trick','rotate']].map(([g,ic])=>{
-        const c=(udata.trips['2026']||{})[g.toLowerCase()]||0;
+        const c=((udata.trips['2026']||{})[g.toLowerCase()]||0);
         return`<tr><td><i class="fa-solid fa-${ic}" style="margin-right:8px;color:var(--ts);font-size:12px"></i>${g}</td><td class="num hi">${c}</td></tr>`;
       }).join('')}
       <tr class="tot"><td><strong>Totalt</strong></td><td class="num hi">${total(2026)}</td></tr>
@@ -835,14 +730,12 @@ ${inQ.length?`<div style="background:rgba(0,201,177,.1);border:1.5px solid var(-
     </div>
   </div>
 </div>
-
 <div class="g2">
   <div class="card cs2">
     <div class="ch"><div class="ct"><i class="fa-solid fa-chart-line"></i> Aktivitet 2026</div></div>
     <div class="cb"><div class="cw"><canvas id="dc"></canvas></div></div>
   </div>
 </div>
-
 <div class="card">
   <div class="ch"><div class="ct"><i class="fa-solid fa-rocket"></i> Hurtiglenker</div></div>
   <div class="cb" style="padding:14px">
@@ -850,144 +743,123 @@ ${inQ.length?`<div style="background:rgba(0,201,177,.1);border:1.5px solid var(-
     <div class="qlk" onclick="go('stripe')"><i class="fa-solid fa-coins"></i>Fyll på konto<i class="fa-solid fa-arrow-right arr"></i></div>
     <div class="qlk" onclick="go('aktivitet')"><i class="fa-solid fa-bolt"></i>Din aktivitet<i class="fa-solid fa-arrow-right arr"></i></div>
     <div class="qlk" onclick="window.open('svsk_batkjorer.html','_blank')" style="border-color:rgba(0,201,177,.3);color:var(--aqua)"><i class="fa-solid fa-ship"></i>Båtkjørerside<i class="fa-solid fa-arrow-right arr"></i></div>
-    <div class="qlk" onclick="window.open('https://tobbsenn.github.io/Waterskiboat-Skandinavia','_blank')" style="border-color:rgba(26,115,232,.2)"><i class="fa-solid fa-sailboat"></i>SkiVaro – Båtmarked<i class="fa-solid fa-arrow-right arr"></i></div>
-    <div class="qlk" onclick="window.open('https://tobbsenn.github.io/SpinLog','_blank')" style="border-color:rgba(124,58,237,.2)"><i class="fa-solid fa-rotate"></i>SpinLog – Trick-tracker<i class="fa-solid fa-arrow-right arr"></i></div>
+    <div class="qlk" onclick="window.open('https://tobbsenn.github.io/Waterskiboat-Skandinavia','_blank')"><i class="fa-solid fa-sailboat"></i>SkiVaro – Båtmarked<i class="fa-solid fa-arrow-right arr"></i></div>
+    <div class="qlk" onclick="window.open('https://tobbsenn.github.io/SpinLog','_blank')"><i class="fa-solid fa-rotate"></i>SpinLog – Trick-tracker<i class="fa-solid fa-arrow-right arr"></i></div>
   </div>
 </div>`;
 }
 
 function initDashChart(){
-  const c=document.getElementById('dc');
-  if(!c||!window.Chart) return;
-  const t=udata.trips||{};
-  const y=new Date().getFullYear();
+  const c=document.getElementById('dc'); if(!c||!window.Chart) return;
   const mon=new Date().getMonth();
   const months=['Jan','Feb','Mar','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Des'];
-  const vals=months.slice(0,mon+1).map((_,i)=>i===mon?total(String(y)):0);
-  new Chart(c,{type:'bar',data:{labels:months.slice(0,mon+1),datasets:[{label:String(y),data:vals,backgroundColor:'rgba(26,115,232,.8)',borderRadius:7,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Outfit',size:11},color:'#7B95AE'}},y:{grid:{color:'rgba(214,230,245,.4)'},ticks:{precision:0,font:{family:'Outfit',size:11},color:'#7B95AE'},border:{display:false}}}}});
-}
-
-function dashJoinQ(sjo){
-  const disc=document.getElementById('dashDisc')?.value||'';
-  if(!disc){ toast('Velg gren først!','err'); return; }
-  if(amInQueue(sjo)){ leaveQueue(sjo); } else { joinQueue(sjo,disc); }
+  new Chart(c,{type:'bar',data:{labels:months.slice(0,mon+1),datasets:[{label:'Turer',data:months.slice(0,mon+1).map((_,i)=>i===mon?total(2026):0),backgroundColor:'rgba(26,115,232,.8)',borderRadius:7,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Outfit',size:11},color:'#7B95AE'}},y:{grid:{color:'rgba(214,230,245,.4)'},ticks:{precision:0,font:{family:'Outfit',size:11},color:'#7B95AE'},border:{display:false}}}}});
 }
 
 function doFill(){
   const v=parseInt(document.getElementById('fillAmt')?.value||0);
-  if(!v||v<100){ toast('Minimum beløp er 100 kr','err'); return; }
-  const newBal=(udata.balance||0)+v;
-  const tx={date:todayStr(),desc:'Fyll på konto',amt:v,bal:newBal};
-  const txArr=[tx,...(udata.transactions||[])].slice(0,100);
-  saveUser({balance:newBal,transactions:txArr});
-  toast(`${v} kr lagt til! Ny saldo: ${newBal} kr`,'ok');
+  if(!v||v<100){ toast('Minimum 100 kr','err'); return; }
+  const nb=(udata.balance||0)+v;
+  saveUser({balance:nb,transactions:[{date:todayStr(),desc:'Fyll på konto',amt:v,bal:nb},...(udata.transactions||[])].slice(0,100)});
+  toast(`${v} kr lagt til! Ny saldo: ${nb} kr`,'ok');
   document.getElementById('fillAmt').value='';
 }
 
-/* ─── KJØRELISTE VELG ─── */
+function dashJoin(sjo){
+  const disc=document.getElementById('dashDisc')?.value||'';
+  if(!disc){ toast('Velg gren først!','err'); return; }
+  if(amIn(sjo)){ leaveQueue(sjo); } else { joinQueue(sjo,disc); }
+}
+
+/* ─ QUEUE VELG ─ */
 function pgQueueVelg(){
-  return`<div class="ph"><h1>Kjørelistene</h1><p>Live oppdatert – velg sjø</p></div>
-<div class="g3">
-${[1,2,3].map(n=>{const q=getQueue(n),l=q.length,ia=amInQueue(n);return`
+  return`<div class="ph"><h1>Kjørelistene</h1><p>Live oppdatert · ${PRIS.PER_MIN} kr/min · Min ${PRIS.MIN_PRIS} kr</p></div>
+<div class="g3">${[1,2,3].map(n=>`
 <div class="card" style="cursor:pointer" onclick="go('kjoreliste',{sjo:${n}})">
   <div class="cb" style="text-align:center;padding:28px 16px">
     <i class="fa-solid fa-${n===3?'cable-car':'water'}" style="font-size:38px;color:${n===3?'var(--aqua)':'var(--blue)'};display:block;margin-bottom:12px"></i>
     <div style="font-size:20px;font-weight:800;margin-bottom:4px">Sjø ${n}</div>
     <div style="font-size:13px;color:var(--ts);margin-bottom:14px">${n===3?'Kabelanlegg':'Båtkjøring'}</div>
-    <div style="font-size:32px;font-weight:800;font-family:'JetBrains Mono',monospace;color:${n===3?'var(--aqua)':'var(--blue)'}">${l}</div>
-    <div style="font-size:12px;color:var(--ts);margin-bottom:${ia?12:0}px">på lista</div>
-    ${ia?`<div style="background:rgba(30,200,122,.12);color:var(--green);padding:5px 12px;border-radius:var(--rs);font-size:12px;font-weight:700;display:inline-block"><i class="fa-solid fa-check" style="margin-right:4px"></i>Du er påmeldt</div>`:''}
+    <div style="font-size:32px;font-weight:800;font-family:'JetBrains Mono',monospace;color:${n===3?'var(--aqua)':'var(--blue)'}">${qLen(n)}</div>
+    <div style="font-size:12px;color:var(--ts)">på lista</div>
+    ${amIn(n)?`<div style="margin-top:12px;background:rgba(30,200,122,.12);color:var(--green);padding:5px 12px;border-radius:var(--rs);font-size:12px;font-weight:700;display:inline-block"><i class="fa-solid fa-check" style="margin-right:4px"></i>Du er påmeldt</div>`:''}
   </div>
-</div>`;}).join('')}
-</div>`;
+</div>`).join('')}</div>`;
 }
 
-/* ─── KJØRELISTE ─── */
+/* ─ QUEUE ─ */
 function pgQueue(sjo){
   sjo=parseInt(sjo);
-  const q=getQueue(sjo);
-  const ia=amInQueue(sjo);
-  const myEntry=q.find(x=>x.userId===me.uid);
+  const q=getQ(sjo), ia=amIn(sjo);
   return`
 <div class="bc"><b onclick="go('kjoreliste-velg')">Kjørelistene</b> / Sjø ${sjo}</div>
-<div class="ph">
-  <h1><i class="fa-solid fa-${sjo===3?'cable-car':'water'}" style="color:${sjo===3?'var(--aqua)':'var(--blue)'}"></i> Sjø ${sjo}</h1>
-  <p>${q.length} person${q.length!==1?'er':''} på lista · <span style="color:var(--green);font-weight:600"><i class="fa-solid fa-circle" style="font-size:8px"></i> Live</span></p>
-</div>
+<div class="ph"><h1><i class="fa-solid fa-${sjo===3?'cable-car':'water'}" style="color:${sjo===3?'var(--aqua)':'var(--blue)'}"></i> Sjø ${sjo}</h1>
+<p>${q.length} på lista · <span style="color:var(--green);font-weight:600"><i class="fa-solid fa-circle" style="font-size:8px"></i> Live</span> · ${PRIS.PER_MIN} kr/min</p></div>
 <div class="g2">
   <div class="card">
     <div class="ch"><div class="ct"><i class="fa-solid fa-list-ol"></i> Køen</div><span style="font-size:12px;color:var(--ts)">${q.length} stk</span></div>
     <div class="cb" style="padding-top:8px;padding-bottom:8px">
       ${q.length===0?`<div class="qe"><i class="fa-solid fa-water"></i>Køen er tom – vær første! 🌊</div>`:''}
-      <div class="ql">
-        ${q.map((m,i)=>{
-          const isMe=m.userId===me.uid;
-          return`<div class="qi">
-            <div class="qpos${isMe?' me':''}">${i+1}</div>
-            <div class="qn">${m.name}${isMe?` <span style="font-size:11px;color:var(--blue);font-weight:700">(deg)</span>`:''}</div>
-            ${discPill(m.disc)}
-            ${m.addedAt?`<span style="font-size:11px;color:var(--ts)">${m.addedAt}</span>`:''}
-            ${isMe?`<button class="btn bda bsm" onclick="leaveQueue(${sjo})"><i class="fa-solid fa-xmark"></i> Forlat</button>`:''}
-          </div>`;
-        }).join('')}
+      <div class="ql">${q.map((m,i)=>{const isMe=m.userId===me.uid;return`
+        <div class="qi">
+          <div class="qpos${isMe?' me':''}">${i+1}</div>
+          <div class="qn">${m.name}${isMe?` <span style="font-size:11px;color:var(--blue);font-weight:700">(deg)</span>`:''}</div>
+          ${discPill(m.disc)}
+          ${m.addedAt?`<span style="font-size:11px;color:var(--ts)">${m.addedAt}</span>`:''}
+          ${isMe?`<button class="btn bda bsm" onclick="leaveQueue(${sjo})"><i class="fa-solid fa-xmark"></i> Forlat</button>`:''}
+        </div>`;}).join('')}
       </div>
     </div>
   </div>
   <div class="card">
     <div class="ch"><div class="ct"><i class="fa-solid fa-plus"></i> Meld deg på</div></div>
     <div class="cb">
-      ${ia?`
-        <div style="text-align:center;padding:20px 0">
-          <div style="width:56px;height:56px;border-radius:50%;background:rgba(30,200,122,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;color:var(--green)"><i class="fa-solid fa-check"></i></div>
-          <div style="font-size:16px;font-weight:800;margin-bottom:4px">Du er påmeldt!</div>
-          <div style="font-size:13px;color:var(--ts);margin-bottom:4px">Gren: <strong>${myEntry?.disc||udata.lastDisc||'–'}</strong></div>
-          <div style="font-size:13px;color:var(--ts);margin-bottom:20px">Din posisjon: <strong>${q.findIndex(x=>x.userId===me.uid)+1}</strong> av ${q.length}</div>
-          <button class="btn br bfu" onclick="leaveQueue(${sjo})"><i class="fa-solid fa-xmark"></i> Forlat køen</button>
-        </div>
-      `:`
-        <div class="fg"><label>Velg gren</label>
-          <select id="qDisc${sjo}"><option value="">-- Velg gren --</option><option>Slalom</option><option>Hopp</option><option>Trick</option><option>Wakeboard</option></select>
-        </div>
-        <div style="background:var(--sky);border-radius:var(--rs);padding:11px 13px;font-size:13px;color:var(--tm);margin-bottom:14px">
-          <i class="fa-solid fa-circle-info" style="color:var(--blue);margin-right:5px"></i>
-          Pris: <strong>110 kr</strong> · Din saldo: <strong>${udata.balance||0} kr</strong>
-          ${(udata.balance||0)<110?`<div style="color:var(--red);font-weight:600;margin-top:5px"><i class="fa-solid fa-triangle-exclamation"></i> For lav saldo!</div>`:''}
-        </div>
-        <button class="btn bp bfu" ${(udata.balance||0)<110?'disabled style="opacity:.5;cursor:not-allowed"':''} onclick="joinQueuePage(${sjo})">
-          <i class="fa-solid fa-person-walking-arrow-right"></i> Meld meg på
-        </button>
-        ${(udata.balance||0)<110?`<button class="btn bo bfu" style="margin-top:8px" onclick="go('stripe')"><i class="fa-solid fa-coins"></i> Fyll på konto</button>`:''}
+      ${ia?`<div style="text-align:center;padding:18px 0">
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(30,200,122,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;color:var(--green)"><i class="fa-solid fa-check"></i></div>
+        <div style="font-size:16px;font-weight:800;margin-bottom:4px">Du er påmeldt!</div>
+        <div style="font-size:13px;color:var(--ts);margin-bottom:16px">Position: <strong>${q.findIndex(x=>x.userId===me.uid)+1}</strong> av ${q.length}</div>
+        <button class="btn br bfu" onclick="leaveQueue(${sjo})"><i class="fa-solid fa-xmark"></i> Forlat køen</button>
+      </div>`:`
+      <div class="fg"><label>Velg gren</label>
+        <select id="qd${sjo}"><option value="">-- Velg gren --</option><option>Slalom</option><option>Hopp</option><option>Trick</option><option>Wakeboard</option></select>
+      </div>
+      <div style="background:var(--sky);border-radius:var(--rs);padding:11px;font-size:13px;color:var(--tm);margin-bottom:14px">
+        <i class="fa-solid fa-circle-info" style="color:var(--blue);margin-right:5px"></i>
+        <strong>${PRIS.PER_MIN} kr/min</strong> · Min ${PRIS.MIN_PRIS} kr · Saldo: <strong>${udata.balance||0} kr</strong>
+        ${(udata.balance||0)<PRIS.MIN_PRIS?`<div style="color:var(--red);font-weight:600;margin-top:4px"><i class="fa-solid fa-triangle-exclamation"></i> For lav saldo!</div>`:''}
+      </div>
+      <button class="btn bp bfu" ${(udata.balance||0)<PRIS.MIN_PRIS?'disabled style="opacity:.5"':''} onclick="joinQP(${sjo})">
+        <i class="fa-solid fa-person-walking-arrow-right"></i> Meld meg på
+      </button>
+      ${(udata.balance||0)<PRIS.MIN_PRIS?`<button class="btn bo bfu" style="margin-top:8px" onclick="go('stripe')"><i class="fa-solid fa-coins"></i> Fyll på konto</button>`:''}
       `}
     </div>
   </div>
-</div>
-<div style="background:var(--sky);border-radius:var(--rs);padding:12px 16px;font-size:13px;color:var(--tm);display:flex;align-items:center;gap:8px">
-  <i class="fa-solid fa-circle" style="color:var(--green);font-size:9px"></i>
-  Køen oppdateres automatisk i sanntid for alle enheter.
 </div>`;
 }
 
-function joinQueuePage(sjo){
-  const disc=document.getElementById('qDisc'+sjo)?.value||'';
+function joinQP(sjo){
+  const disc=document.getElementById('qd'+sjo)?.value||'';
   if(!disc){ toast('Velg gren!','err'); return; }
+  if((udata.balance||0)<PRIS.MIN_PRIS){ toast('For lav saldo','err'); return; }
   joinQueue(sjo,disc);
 }
 
-/* ─── KONTO ─── */
+/* ─ KONTO ─ */
 function pgKonto(){
   const name=udata.name||me.email.split('@')[0];
-  const initials=name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const ini=name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
   return`
 <div class="ph"><h1>Din konto</h1></div>
 <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap">
   <div class="card" style="flex:1;min-width:200px">
-    <div class="cb" style="text-align:center;padding:28px 20px">
-      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--bl),var(--aqua));display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;margin:0 auto 14px">${initials}</div>
-      <div style="font-size:19px;font-weight:800;margin-bottom:4px">${name}</div>
-      <div style="font-size:13px;color:var(--ts);margin-bottom:18px">${me.email}</div>
-      <div style="background:var(--sky);border-radius:var(--rs);padding:14px;display:inline-block;min-width:160px">
+    <div class="cb" style="text-align:center;padding:26px 20px">
+      <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--bl),var(--aqua));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;margin:0 auto 12px">${ini}</div>
+      <div style="font-size:18px;font-weight:800;margin-bottom:4px">${name}</div>
+      <div style="font-size:13px;color:var(--ts);margin-bottom:16px">${me.email}</div>
+      <div style="background:var(--sky);border-radius:var(--rs);padding:12px;display:inline-block;min-width:150px">
         <div style="font-size:10px;color:var(--ts);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Saldo</div>
-        <div style="font-size:30px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--nm)">${udata.balance||0} kr</div>
+        <div style="font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--nm)">${udata.balance||0} kr</div>
       </div>
     </div>
   </div>
@@ -995,9 +867,9 @@ function pgKonto(){
     <div class="ch"><div class="ct"><i class="fa-regular fa-user"></i> Profil</div></div>
     <div class="cb">
       <div class="fg"><label>Fullt navn</label><input type="text" id="kName" value="${name}"></div>
-      <div class="fg"><label>E-post</label><input type="email" value="${me.email}" disabled style="opacity:.7;cursor:not-allowed"></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn bp" onclick="saveName()"><i class="fa-solid fa-floppy-disk"></i> Lagre navn</button>
+      <div class="fg"><label>E-post</label><input type="email" value="${me.email}" disabled style="opacity:.65;cursor:not-allowed"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn bp" onclick="saveName()"><i class="fa-solid fa-floppy-disk"></i> Lagre</button>
         <button class="btn bo" onclick="go('stripe')"><i class="fa-solid fa-coins"></i> Fyll på</button>
         <button class="btn br" onclick="doLogout()" style="margin-left:auto"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logg ut</button>
       </div>
@@ -1009,33 +881,24 @@ function pgKonto(){
   <div class="card"><div class="cb" style="text-align:center;padding:20px"><div style="font-size:32px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--gold);margin-bottom:5px">${total(2025)}</div><div style="font-size:12px;color:var(--ts)">Turer 2025</div></div></div>
   <div class="card"><div class="cb" style="text-align:center;padding:20px"><div style="font-size:32px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--green);margin-bottom:5px">${udata.spent||0}</div><div style="font-size:12px;color:var(--ts)">Brukt kr (2026)</div></div></div>
 </div>
-${(udata.transactions||[]).length?`
-<div class="card">
-  <div class="ch"><div class="ct"><i class="fa-solid fa-clock-rotate-left"></i> Siste transaksjoner</div></div>
-  <div class="cb" style="padding:0">
-    <table class="tbl"><thead><tr><th>Dato</th><th>Beskrivelse</th><th style="text-align:right">Beløp</th><th style="text-align:right">Saldo</th></tr></thead><tbody>
-    ${(udata.transactions||[]).slice(0,8).map(t=>`<tr>
-      <td style="color:var(--ts);font-size:12px;white-space:nowrap">${t.date}</td>
-      <td>${t.desc}${t.fromBoat?` <span class="pill ok" style="font-size:10px">Båt</span>`:''}</td>
-      <td class="num" style="color:${t.amt>0?'var(--green)':'var(--red)'};font-weight:700">${t.amt>0?'+':''}${t.amt} kr</td>
-      <td class="num">${t.bal} kr</td>
-    </tr>`).join('')}
-    </tbody></table>
-  </div>
-</div>`:''}`;
+${(udata.transactions||[]).length?`<div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-clock-rotate-left"></i> Kontologg</div></div>
+<div class="cb" style="padding:0"><table class="tbl"><thead><tr><th>Dato</th><th>Beskrivelse</th><th style="text-align:right">Beløp</th><th style="text-align:right">Saldo</th></tr></thead><tbody>
+${(udata.transactions||[]).slice(0,10).map(t=>`<tr>
+  <td style="color:var(--ts);font-size:12px;white-space:nowrap">${t.date}</td>
+  <td>${t.desc}${t.fromBoat?` <span style="background:rgba(30,200,122,.12);color:var(--green);font-size:10px;padding:1px 6px;border-radius:4px;font-weight:700">Båt</span>`:''}</td>
+  <td class="num" style="color:${t.amt>0?'var(--green)':'var(--red)'};font-weight:700">${t.amt>0?'+':''}${t.amt} kr</td>
+  <td class="num">${t.bal} kr</td>
+</tr>`).join('')}
+</tbody></table></div></div>`:''}`;
 }
 
 function saveName(){
   const v=document.getElementById('kName')?.value?.trim()||'';
   if(!v){ toast('Skriv inn navn','err'); return; }
-  saveUser({name:v});
-  document.getElementById('sbName').textContent=v;
-  const initials=v.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-  document.getElementById('sbAv').textContent=initials;
-  toast('Navn oppdatert!','ok');
+  saveUser({name:v}); updateSbUser(); toast('Navn oppdatert!','ok');
 }
 
-/* ─── AKTIVITET ─── */
+/* ─ AKTIVITET ─ */
 function pgAktivitet(){
   return`
 <div class="ph"><h1>Din aktivitet</h1></div>
@@ -1044,10 +907,39 @@ function pgAktivitet(){
   <div class="sc aa"><div class="sch"><div class="scl">Saldo</div><div class="sci aq"><i class="fa-solid fa-wallet"></i></div></div><div class="scv">${udata.balance||0} kr</div></div>
   <div class="sc ag"><div class="sch"><div class="scl">Brukt</div><div class="sci go"><i class="fa-solid fa-coins"></i></div></div><div class="scv">${udata.spent||0} kr</div></div>
 </div>
-<div id="tripsSection">Laster...</div>`;
+<div id="tripsList"><div style="text-align:center;padding:32px;color:var(--ts)"><i class="fa-solid fa-spinner fa-spin" style="font-size:24px;display:block;margin-bottom:8px"></i>Laster...</div></div>`;
 }
 
-/* ─── STRIPE / FYLL PÅ ─── */
+function loadTrips(){
+  db.ref('completedTrips').orderByChild('userId').equalTo(me.uid).limitToLast(30).once('value',snap=>{
+    const el=document.getElementById('tripsList'); if(!el) return;
+    const trips=[]; if(snap.exists()) snap.forEach(c=>trips.push(c.val())); trips.reverse();
+    if(!trips.length){ el.innerHTML=`<div class="card"><div class="cb" style="text-align:center;padding:44px;color:var(--ts)"><i class="fa-solid fa-water" style="font-size:44px;opacity:.2;display:block;margin-bottom:12px"></i>Ingen fullførte turer ennå 🚤</div></div>`; return; }
+    el.innerHTML=`<div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-flag-checkered" style="color:var(--green)"></i> Fullførte turer</div></div>
+    <div class="cb" style="padding-top:8px;padding-bottom:8px">
+    ${trips.map(t=>{
+      const parts=(t.date||'–').split('.');
+      const months={'01':'JAN','02':'FEB','03':'MAR','04':'APR','05':'MAI','06':'JUN','07':'JUL','08':'AUG','09':'SEP','10':'OKT','11':'NOV','12':'DES'};
+      return`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(214,230,245,.5)">
+        <div style="width:48px;height:48px;border-radius:12px;background:var(--sky);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+          <strong style="font-size:16px;font-weight:800;color:var(--nm);line-height:1">${parts[0]||'–'}</strong>
+          <span style="font-size:9.5px;color:var(--ts);text-transform:uppercase;font-weight:700">${months[parts[1]]||parts[1]||'–'}</span>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700">${t.disc||'–'}</div>
+          <div style="font-size:12px;color:var(--ts)">Sjø ${t.sjø||'–'} · ${t.driver||'–'} · ${t.time||''}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:14px;font-weight:700;color:var(--green)">${fmtMs(t.durationMs)}</div>
+          <div style="font-size:11px;color:var(--red);font-weight:600">−${t.pris||'?'} kr</div>
+        </div>
+      </div>`;
+    }).join('')}
+    </div></div>`;
+  });
+}
+
+/* ─ STRIPE ─ */
 function pgStripe(){
   return`
 <div class="bc"><b onclick="go('konto')">Konto</b> / Fyll på</div>
@@ -1062,24 +954,18 @@ function pgStripe(){
       <div class="fg"><label>Eller skriv inn beløp</label><div class="ig"><input type="number" id="sAmt" min="100" placeholder="200"><span class="unit">kr</span></div></div>
       <p class="hint"><i class="fa-solid fa-lock"></i> Sikker betaling via Stripe · BankID kreves</p>
       <button class="btn bp bfu" style="font-size:15px;padding:13px" onclick="doCharge()"><i class="fa-solid fa-bolt"></i> Betal og lad opp</button>
-      <div style="margin-top:14px;display:flex;gap:8px;align-items:center;font-size:12px;color:var(--ts)">Godkjent:
-        <span style="background:var(--sky);padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;color:var(--tm)">VISA</span>
-        <span style="background:var(--sky);padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;color:var(--tm)">Mastercard</span>
-        <span style="background:rgba(255,80,60,.1);padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;color:#e04b30">Vipps</span>
-      </div>
     </div>
   </div>
   <div class="card">
     <div class="ch"><div class="ct"><i class="fa-solid fa-wallet"></i> Din saldo</div></div>
     <div class="cb" style="text-align:center;padding:30px 20px">
-      <div style="font-size:50px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--nm);line-height:1;margin-bottom:8px">${udata.balance||0}</div>
-      <div style="font-size:18px;color:var(--ts);font-weight:500;margin-bottom:22px">kroner tilgode</div>
-      <div style="background:var(--sky);border-radius:var(--rs);padding:13px;font-size:13px;color:var(--tm)">
+      <div style="font-size:48px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--nm);margin-bottom:8px">${udata.balance||0}</div>
+      <div style="font-size:16px;color:var(--ts);margin-bottom:20px">kroner tilgode</div>
+      <div style="background:var(--sky);border-radius:var(--rs);padding:12px;font-size:13px;color:var(--tm)">
         <i class="fa-solid fa-info-circle" style="color:var(--blue);margin-right:5px"></i>
-        Pris per tur: <strong>110 kr</strong><br>
-        Du kan kjøre <strong>${Math.floor((udata.balance||0)/110)}</strong> turer til
+        <strong>${PRIS.PER_MIN} kr/min</strong> · Min ${PRIS.MIN_PRIS} kr<br>
+        Ca ${(udata.balance||0)>0?Math.floor((udata.balance||0)/PRIS.PER_MIN):0} minutters kjøring
       </div>
-      <button class="btn bo" style="margin-top:14px" onclick="go('konto')"><i class="fa-solid fa-clock-rotate-left"></i> Se kontologg</button>
     </div>
   </div>
 </div>`;
@@ -1088,61 +974,13 @@ function pgStripe(){
 function doCharge(){
   const v=parseInt(document.getElementById('sAmt')?.value||0);
   if(!v||v<100){ toast('Min 100 kr','err'); return; }
-  const newBal=(udata.balance||0)+v;
-  const tx={date:todayStr(),desc:'Fyll på konto (Stripe)',amt:v,bal:newBal};
-  const txArr=[tx,...(udata.transactions||[])].slice(0,100);
-  saveUser({balance:newBal,transactions:txArr});
-  toast(`${v} kr lagt til! Ny saldo: ${newBal} kr`,'ok',4000);
+  const nb=(udata.balance||0)+v;
+  saveUser({balance:nb,transactions:[{date:todayStr(),desc:'Fyll på konto (Stripe)',amt:v,bal:nb},...(udata.transactions||[])].slice(0,100)});
+  toast(`${v} kr lagt til! Saldo: ${nb} kr`,'ok',4000);
   document.getElementById('sAmt').value='';
 }
 
-/* ─── LOAD TRIPS (aktivitet) ─── */
-function loadTrips(){
-  if(activePage!=='aktivitet') return;
-  db.ref('completedTrips').orderByChild('userId').equalTo(me.uid).limitToLast(20).once('value',snap=>{
-    const trips=[];
-    if(snap.exists()) snap.forEach(c=>trips.push(c.val()));
-    trips.reverse();
-    const el=document.getElementById('tripsSection');
-    if(!el) return;
-    if(!trips.length){
-      el.innerHTML=`<div class="card"><div class="cb" style="text-align:center;padding:44px;color:var(--ts)">
-        <i class="fa-solid fa-water" style="font-size:44px;opacity:.2;display:block;margin-bottom:12px"></i>
-        Ingen fullførte turer ennå.<br>Meld deg på en kjøreliste for å komme i gang! 🚤
-      </div></div>`;
-      return;
-    }
-    el.innerHTML=`<div class="card"><div class="ch"><div class="ct"><i class="fa-solid fa-flag-checkered" style="color:var(--green)"></i> Fullførte turer</div></div>
-    <div class="cb" style="padding-top:8px;padding-bottom:8px">
-    ${trips.map(t=>{
-      const d=t.date||'–';
-      const day=d.split('.')[0]||'–';
-      const mon=d.split('.')[1]||'–';
-      const mmap={'01':'JAN','02':'FEB','03':'MAR','04':'APR','05':'MAI','06':'JUN','07':'JUL','08':'AUG','09':'SEP','10':'OKT','11':'NOV','12':'DES'};
-      return`<div class="ae">
-        <div class="adt"><strong>${day}</strong><span>${mmap[mon]||mon}</span></div>
-        <div style="flex:1;padding:0 4px">
-          <div style="font-size:14px;font-weight:700">${t.disc||'–'}</div>
-          <div style="font-size:12px;color:var(--ts)">Sjø ${t.sjø||'–'} · Sjåfør: ${t.driver||'–'} · ${t.time||''}</div>
-        </div>
-        <div style="text-align:right"><div style="font-size:14px;font-weight:700;color:var(--green)">${fmtMs(t.durationMs)}</div><div style="font-size:11px;color:var(--ts)">varighet</div></div>
-      </div>`;
-    }).join('')}
-    </div></div>`;
-  });
-}
-
-// Load trips when aktivitet is shown
-const _origRender = render;
-const _monkeyRender = function(){
-  _origRender();
-  if(activePage==='aktivitet') setTimeout(loadTrips,100);
-};
-// Patch render
-window.render = _monkeyRender;
-
-/* ═══════════════════ INIT ═══════════════════════════════════ */
-// Show auth page on load
+/* ═══════════════ INIT ════════════════════════════════════════ */
 showAuth();
 </script>
 </body>
