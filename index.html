@@ -392,7 +392,7 @@ function calcPris(durationMs) {
    ║  FIREBASE CONFIG – bytt ut med dine egne verdier!           ║
    ╚══════════════════════════════════════════════════════════════╝ */
 const FIREBASE_CONFIG = {
-apiKey:            "AIzaSyD24SH3zwKUWmxxEXlhzuPG9vOoVJ1ymq4",
+   apiKey:            "AIzaSyD24SH3zwKUWmxxEXlhzuPG9vOoVJ1ymq4",
   authDomain:        "waterqueue-6a605.firebaseapp.com",
   databaseURL:       "https://ditt-prosjekt-default-rtdb.europe-west1.firebasedatabase.app",
   projectId:         "waterqueue-6a605",
@@ -499,11 +499,16 @@ async function doRegister(){
 
 /* Google – bruker redirect (virker i alle nettlesere, ikke blokkert) */
 function doGoogle(){
-  // Sett en flag så vi vet at redirect er i gang
   sessionStorage.setItem('googleRedirect','1');
   auth.signInWithRedirect(googleProvider).catch(e=>{
     sessionStorage.removeItem('googleRedirect');
-    showErr('login','Google-innlogging feilet: '+e.message);
+    if(e.code==='auth/unauthorized-domain'){
+      showErr('login',
+        'Domenet er ikke autorisert. Gå til Firebase Console → Authentication → Settings → Authorized domains → Add domain → skriv inn "'+window.location.hostname+'"'
+      );
+    } else {
+      showErr('login','Google-innlogging feilet: '+e.message);
+    }
   });
 }
 
@@ -536,12 +541,36 @@ function defaultUserData(name,email){
 
 async function loadUser(user){
   try {
-    // Real-time user data
+    // ── Steg 1: Last brukerdata med once() FØR vi viser appen ──────────
+    const snap = await db.ref('users/'+user.uid).once('value');
+    if(!snap.exists()){
+      const nd = defaultUserData(user.displayName||user.email.split('@')[0], user.email);
+      await db.ref('users/'+user.uid).set(nd);
+      udata = nd;
+    } else {
+      udata = snap.val();
+    }
+    if(!udata.trips)        udata.trips={2025:{slalom:0,hopp:0,wakeboard:0,trick:0,annet:0},2026:{slalom:0,hopp:0,wakeboard:0,trick:0,annet:0}};
+    if(!udata.inQueue)      udata.inQueue={1:false,2:false,3:false};
+    if(!udata.transactions) udata.transactions=[];
+    updateSbUser();
+
+    // ── Steg 2: Last kø med once() så topbaren er riktig fra start ──────
+    const qSnap = await db.ref('queue').once('value');
+    queues={1:[],2:[],3:[]};
+    if(qSnap.exists()){
+      const v=qSnap.val();
+      [1,2,3].forEach(n=>{
+        if(v[n]) queues[n]=Object.entries(v[n]).map(([k,e])=>({...e,_key:k})).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0));
+      });
+    }
+
+    // ── Steg 3: Vis appen NÅ – data er klar ─────────────────────────────
+    hideLoad(); showMainApp(); go('dashboard'); resetActivity();
+
+    // ── Steg 4: Sett opp real-time lyttere for videre oppdateringer ──────
     db.ref('users/'+user.uid).on('value', snap=>{
-      if(!snap.exists()){
-        db.ref('users/'+user.uid).set(defaultUserData(user.displayName||user.email.split('@')[0], user.email));
-        return;
-      }
+      if(!snap.exists()) return;
       udata=snap.val();
       if(!udata.trips)        udata.trips={2025:{},2026:{}};
       if(!udata.inQueue)      udata.inQueue={1:false,2:false,3:false};
@@ -550,7 +579,6 @@ async function loadUser(user){
       if(document.getElementById('mainApp').style.display!=='none') render();
     });
 
-    // Real-time queue (shared across all users/devices)
     db.ref('queue').on('value', snap=>{
       queues={1:[],2:[],3:[]};
       if(snap.exists()){
@@ -563,10 +591,15 @@ async function loadUser(user){
       if(['dashboard','kjoreliste','kjoreliste-velg'].includes(activePage)) render();
     });
 
-    hideLoad(); showMainApp(); go('dashboard'); resetActivity();
   } catch(e){
-    console.error(e); hideLoad();
-    toast('Feil ved innlasting','err'); auth.signOut();
+    console.error('loadUser feil:', e);
+    hideLoad();
+    if(e.code==='PERMISSION_DENIED'){
+      toast('Tilgang nektet – sjekk Firebase-regler (testmodus)','err',6000);
+    } else {
+      toast('Feil ved innlasting: '+e.message,'err',5000);
+    }
+    setTimeout(()=>auth.signOut(), 3000);
   }
 }
 
