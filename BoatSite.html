@@ -8,11 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<!-- Samme Firebase config som main! -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -25,34 +22,36 @@
 *{-webkit-tap-highlight-color:transparent}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;flex-direction:column}
 
-/* HDR */
-.hdr{background:var(--navy);height:58px;display:flex;align-items:center;padding:0 18px;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25)}
-.h-ico{width:34px;height:34px;background:linear-gradient(135deg,var(--blue),var(--aqua));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0}
+/* HEADER */
+.hdr{background:var(--navy);height:58px;display:flex;align-items:center;padding:0 18px;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+/* Logo i hjørnet */
+.h-logo-img{width:34px;height:34px;border-radius:9px;object-fit:cover;display:none;flex-shrink:0}
+.h-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--blue),var(--aqua));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0}
 .h-t strong{font-size:13px;font-weight:700;color:#fff;display:block}
 .h-t span{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em}
 .h-right{margin-left:auto;display:flex;align-items:center;gap:8px}
 .hbtn{padding:7px 14px;border-radius:var(--rs);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all var(--t);display:inline-flex;align-items:center;gap:6px;text-decoration:none}
 .hbtn:hover{background:rgba(255,255,255,.18);color:#fff}
-.driver-pill{display:flex;align-items:center;gap:8px;background:rgba(30,200,122,.15);border:1px solid rgba(30,200,122,.3);border-radius:30px;padding:5px 14px 5px 6px;cursor:pointer}
+.driver-pill{display:flex;align-items:center;gap:8px;background:rgba(30,200,122,.15);border:1px solid rgba(30,200,122,.3);border-radius:30px;padding:5px 14px 5px 6px;cursor:pointer;transition:background var(--t)}
 .driver-pill:hover{background:rgba(30,200,122,.25)}
 .dp-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
 .dp-name{font-size:12.5px;font-weight:700;color:#fff}
 
-/* CONTENT */
+/* PAGE */
 .pg{padding:22px 16px;max-width:640px;margin:0 auto;width:100%;flex:1}
-
-/* DRIVER SELECT */
-.pt{font-size:22px;font-weight:800;color:var(--txt);margin-bottom:6px}
+.pt{font-size:22px;font-weight:800;margin-bottom:6px}
 .ps{font-size:14px;color:var(--ts);margin-bottom:22px}
+
+/* DRIVER GRID */
 .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 .dcard{background:var(--w);border:2px solid var(--bdr);border-radius:var(--r);padding:20px 14px;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;transition:all var(--t);box-shadow:var(--sh);user-select:none}
 .dcard:hover{border-color:var(--blue);background:var(--sky);transform:translateY(-2px);box-shadow:var(--shm)}
-.dav{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.18)}
-.dname{font-size:14px;font-weight:700;color:var(--txt);text-align:center;line-height:1.3}
+.dav{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.dname{font-size:14px;font-weight:700;text-align:center;line-height:1.3}
 
 /* LOGIN */
 .lcard{background:var(--w);border:1.5px solid var(--bdr);border-radius:var(--r);padding:30px 26px;box-shadow:var(--sh);text-align:center}
-.lav{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;margin:0 auto 14px;box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.lav{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:27px;font-weight:800;color:#fff;margin:0 auto 14px;box-shadow:0 4px 16px rgba(0,0,0,.18)}
 .lname{font-size:20px;font-weight:800;margin-bottom:5px}
 .lsub{font-size:13.5px;color:var(--ts);margin-bottom:22px}
 .pw-input{border:2px solid var(--bdr);border-radius:var(--rs);padding:13px 16px;font-family:'Outfit',sans-serif;font-size:18px;width:100%;text-align:center;letter-spacing:.12em;outline:none;transition:border-color var(--t);margin-bottom:6px}
@@ -69,53 +68,50 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .bgold{background:var(--gold);color:#fff}.bgold:hover{background:#d48a10;transform:translateY(-1px)}
 
 /* SJØ TABS */
-.stabs{display:flex;background:var(--w);border:1.5px solid var(--bdr);border-radius:var(--r);padding:4px;margin-bottom:18px;overflow:hidden}
-.stab{flex:1;padding:10px 8px;text-align:center;border-radius:var(--rs);font-size:13.5px;font-weight:600;color:var(--ts);cursor:pointer;transition:all var(--t);user-select:none;position:relative}
+.stabs{display:flex;background:var(--w);border:1.5px solid var(--bdr);border-radius:var(--r);padding:4px;margin-bottom:18px}
+.stab{flex:1;padding:10px 8px;text-align:center;border-radius:var(--rs);font-size:13.5px;font-weight:600;color:var(--ts);cursor:pointer;transition:all var(--t);user-select:none}
 .stab.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(26,115,232,.3)}
 .stab .cnt{display:inline-block;background:rgba(255,255,255,.3);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:5px}
 .stab:not(.active) .cnt{background:var(--skm);color:var(--ts)}
 
-/* QUEUE ITEMS */
+/* QUEUE */
 .qitem{background:var(--w);border:2px solid var(--bdr);border-radius:var(--r);padding:15px 16px;margin-bottom:9px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all var(--t);box-shadow:var(--sh);user-select:none}
 .qitem:hover{border-color:var(--blue);background:var(--sky);transform:translateX(4px);box-shadow:var(--shm)}
 .qnum{width:36px;height:36px;border-radius:50%;background:var(--sky);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:var(--nm);flex-shrink:0}
 .qnum.first{background:var(--gold);color:#fff}
-.qn{font-size:15px;font-weight:700;flex:1}
-.qm{font-size:12px;color:var(--ts);margin-top:2px}
 .qd{font-size:12px;padding:3px 10px;border-radius:6px;font-weight:700}
 .qd.S{background:rgba(26,115,232,.1);color:var(--blue)}.qd.T{background:rgba(124,58,237,.1);color:var(--pur)}.qd.H{background:rgba(245,166,35,.1);color:var(--gold)}.qd.W{background:rgba(0,201,177,.1);color:var(--aqua)}.qd.A{background:var(--sky);color:var(--ts)}
 .qempty{text-align:center;padding:44px 20px;color:var(--ts);background:var(--w);border:2px dashed var(--bdr);border-radius:var(--r)}
 .qempty i{font-size:44px;display:block;margin-bottom:12px;opacity:.2}
 
-/* CONFIRM MODAL */
+/* MODAL */
 .modal-bg{position:fixed;inset:0;background:rgba(11,30,61,.55);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .modal{background:var(--w);border-radius:var(--r);padding:26px 22px;max-width:380px;width:100%;box-shadow:var(--shm);animation:pop .2s cubic-bezier(.34,1.56,.64,1)}
 @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 .rider-box{background:var(--sky);border-radius:var(--rs);padding:14px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px}
 
-/* ACTIVE TRIP */
+/* TRIP */
 .trip-card{background:var(--w);border-radius:var(--r);padding:26px 22px;box-shadow:var(--shm);border:2px solid var(--bdr);text-align:center}
 .trip-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--aqua));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;margin:0 auto 12px}
-.trip-name{font-size:20px;font-weight:800;margin-bottom:4px}
-.trip-meta{font-size:14px;color:var(--ts);margin-bottom:26px;display:flex;justify-content:center;align-items:center;gap:8px}
-.timer{font-family:'JetBrains Mono',monospace;font-size:64px;font-weight:700;letter-spacing:.02em;line-height:1;margin-bottom:6px;transition:color var(--t)}
-.timer.run{color:var(--nm)}
-.timer.pause{color:var(--gold)}
-.timer-state{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:26px;height:20px;display:flex;align-items:center;justify-content:center;gap:6px}
+.timer{font-family:'JetBrains Mono',monospace;font-size:62px;font-weight:700;letter-spacing:.02em;line-height:1;margin-bottom:6px;transition:color var(--t)}
+.timer.run{color:var(--nm)}.timer.pause{color:var(--gold)}
+.timer-state{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;height:20px;display:flex;align-items:center;justify-content:center;gap:6px}
 .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.2s ease infinite}
 @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
 .pdot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
-.trip-btns{display:flex;gap:10px;justify-content:center;margin-bottom:18px}
+/* Live pris display */
+.live-pris{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--red);margin-bottom:22px}
+.trip-btns{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
 .trip-btns .btn{flex:none;font-size:16px;padding:14px 22px}
-.chips{display:flex;gap:8px;justify-content:center;margin-bottom:0}
+.chips{display:flex;gap:8px;justify-content:center}
 .chip{background:var(--sky);border:1px solid var(--skm);border-radius:var(--rs);padding:7px 14px;font-size:13px;color:var(--tm);font-weight:600;display:flex;align-items:center;gap:5px}
 .end-confirm{background:rgba(232,68,90,.06);border:2px solid rgba(232,68,90,.2);border-radius:var(--r);padding:18px;margin-top:18px}
 .end-confirm p{font-size:14px;color:var(--tm);margin-bottom:12px}
-.end-confirm .btn-row{display:flex;gap:8px;max-width:300px;margin:0 auto}
+.end-confirm .brow{display:flex;gap:8px;max-width:300px;margin:0 auto}
 
 /* DONE */
 .done-card{text-align:center;padding:44px 24px;background:var(--w);border-radius:var(--r);box-shadow:var(--sh)}
-.done-circle{width:80px;height:80px;border-radius:50%;background:rgba(30,200,122,.12);border:2px solid rgba(30,200,122,.4);display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--green);margin:0 auto 18px;animation:pop .4s cubic-bezier(.34,1.56,.64,1)}
+.done-circle{width:78px;height:78px;border-radius:50%;background:rgba(30,200,122,.12);border:2px solid rgba(30,200,122,.4);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--green);margin:0 auto 18px;animation:pop .4s cubic-bezier(.34,1.56,.64,1)}
 
 /* TOAST */
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:12px 22px;border-radius:30px;font-size:14px;font-weight:700;z-index:999;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;pointer-events:none;box-shadow:var(--shm)}
@@ -124,12 +120,18 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 footer{padding:13px 18px;font-size:11.5px;color:var(--ts);border-top:1px solid var(--bdr);background:var(--w);text-align:center;margin-top:auto}
 
-@media(max-width:480px){.dgrid{grid-template-columns:1fr 1fr}.timer{font-size:50px}.trip-btns .btn{padding:13px 16px;font-size:14px}}
+@media(max-width:480px){.dgrid{grid-template-columns:1fr 1fr}.timer{font-size:50px}.trip-btns .btn{padding:13px 14px;font-size:14px}}
 </style>
 </head>
 <body>
+
 <header class="hdr">
-  <div class="h-ico"><i class="fa-solid fa-water"></i></div>
+  <!-- Logo i hjørnet – legg logo.png/logo.jpg i samme mappe -->
+  <img id="hLogoImg" class="h-logo-img"
+       src="logo.png"
+       onerror="document.getElementById('hLogoImg').style.display='none';document.getElementById('hLogoIcon').style.display='flex'"
+       alt="logo">
+  <div id="hLogoIcon" class="h-logo-icon"><i class="fa-solid fa-water"></i></div>
   <div class="h-t"><strong>SVSK</strong><span>Båtkjørerside</span></div>
   <div class="h-right" id="hRight">
     <a href="svsk_main.html" class="hbtn"><i class="fa-solid fa-arrow-left"></i> Hjem</a>
@@ -142,10 +144,25 @@ footer{padding:13px 18px;font-size:11.5px;color:var(--ts);border-top:1px solid v
 
 <script>
 /* ╔══════════════════════════════════════════════════════════════╗
-   ║  FIREBASE CONFIG – MÅ MATCHE svsk_main.html!                ║
+   ║  PRIS PER MINUTT – MÅ MATCHE svsk_main.html!                ║
+   ╠══════════════════════════════════════════════════════════════╣
+   ║  Endre her OG i svsk_main.html for å justere prisen         ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+const PRIS = {
+  PER_MIN:  12,   // ← ENDRE HER: kr per minutt
+  MIN_PRIS: 20,   // ← ENDRE HER: minimum pris per tur (kr)
+};
+
+function calcPris(durationMs){
+  const min = durationMs / 60000;
+  return Math.max(PRIS.MIN_PRIS, Math.round(min * PRIS.PER_MIN));
+}
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  FIREBASE CONFIG – må matche svsk_main.html!                ║
    ╚══════════════════════════════════════════════════════════════╝ */
 const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyD24SH3zwKUWmxxEXlhzuPG9vOoVJ1ymq4",
+   apiKey:            "AIzaSyD24SH3zwKUWmxxEXlhzuPG9vOoVJ1ymq4",
   authDomain:        "waterqueue-6a605.firebaseapp.com",
   databaseURL:       "https://ditt-prosjekt-default-rtdb.europe-west1.firebasedatabase.app",
   projectId:         "waterqueue-6a605",
@@ -157,7 +174,7 @@ const FIREBASE_CONFIG = {
 firebase.initializeApp(FIREBASE_CONFIG);
 const db = firebase.database();
 
-/* ═══════════════════ DRIVERS ════════════════════════════════ */
+/* DRIVERS */
 const DRIVERS = [
   {id:1, name:'Erik Johansson',   ini:'EJ', pw:'erik2026',   col:'#1A73E8'},
   {id:2, name:'Kari Pedersen',    ini:'KP', pw:'kari2026',   col:'#00C9B1'},
@@ -169,65 +186,44 @@ const DRIVERS = [
   {id:8, name:'Anna Sæther',      ini:'AS', pw:'anna2026',   col:'#7C3AED'},
 ];
 
-/* ═══════════════════ STATE ══════════════════════════════════ */
+/* STATE */
 const A = {
-  step:        'select',  // select | login | queue | trip | done
-  driver:      null,
-  sjo:         1,
-  queues:      {1:[],2:[],3:[]},
-  rider:       null,      // active rider in trip
-  riderKey:    null,      // Firebase key of rider
-  confirmR:    null,
-  tripStart:   null,
-  paused:      false,
-  pauseStart:  null,
-  pausedMs:    0,
-  elapsedMs:   0,
-  timerInt:    null,
-  showEnd:     false,
-  lastRider:   null,
-  lastDurMs:   0,
+  step:'select', driver:null, sjo:1,
+  queues:{1:[],2:[],3:[]},
+  rider:null, riderKey:null, confirmR:null,
+  tripStart:null, paused:false, pauseStart:null,
+  pausedMs:0, elapsedMs:0, timerInt:null,
+  showEnd:false, lastRider:null, lastDurMs:0, lastPris:0
 };
 
-/* ═══════════════════ FIREBASE QUEUE LISTENER ════════════════ */
-let qListener = null;
+/* FIREBASE QUEUE LISTENER */
 function startQueueListener(){
-  if(qListener) qListener();
-  const ref = db.ref('queue');
-  ref.on('value', snap => {
-    A.queues = {1:[],2:[],3:[]};
+  db.ref('queue').on('value', snap=>{
+    A.queues={1:[],2:[],3:[]};
     if(snap.exists()){
-      const v = snap.val();
+      const v=snap.val();
       [1,2,3].forEach(n=>{
-        if(v[n]){
-          A.queues[n] = Object.entries(v[n])
-            .map(([k,e])=>({...e,_key:k}))
-            .sort((a,b)=>(a.timestamp||0)-(b.timestamp||0));
-        }
+        if(v[n]) A.queues[n]=Object.entries(v[n]).map(([k,e])=>({...e,_key:k})).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0));
       });
     }
     if(A.step==='queue') bRender();
-    else updateTabBadges();
+    else updateSjoBadges();
   });
 }
 
 function discPill(d){const m={Slalom:'S',Trick:'T',Hopp:'H',Wakeboard:'W'};return`<span class="qd ${m[d]||'A'}">${d||'Annet'}</span>`;}
 
-/* ═══════════════════ ROUTER ═════════════════════════════════ */
-function go(step,extra={}){
-  Object.assign(A,{step,...extra,showEnd:false});
-  bRender();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+/* ROUTER */
+function go(step,extra={}){ Object.assign(A,{step,...extra,showEnd:false}); bRender(); window.scrollTo({top:0,behavior:'smooth'}); }
 
 function bRender(){
   updateHdr();
   const pg=document.getElementById('pg');
-  if(A.step==='select') pg.innerHTML=rSelect();
-  else if(A.step==='login')  pg.innerHTML=rLogin();
-  else if(A.step==='queue')  pg.innerHTML=rQueue();
-  else if(A.step==='trip')   pg.innerHTML=rTrip();
-  else if(A.step==='done')   pg.innerHTML=rDone();
+  if(A.step==='select')     pg.innerHTML=rSelect();
+  else if(A.step==='login') pg.innerHTML=rLogin();
+  else if(A.step==='queue') pg.innerHTML=rQueue();
+  else if(A.step==='trip')  pg.innerHTML=rTrip();
+  else if(A.step==='done')  pg.innerHTML=rDone();
   afterRender();
 }
 
@@ -249,14 +245,14 @@ function updateHdr(){
   }
 }
 
-function updateTabBadges(){
+function updateSjoBadges(){
   [1,2,3].forEach(n=>{
     const el=document.querySelector(`[data-sjo="${n}"] .cnt`);
     if(el) el.textContent=(A.queues[n]||[]).length;
   });
 }
 
-/* ═══════════════════ PAGES ══════════════════════════════════ */
+/* PAGES */
 
 function rSelect(){
   return`
@@ -267,13 +263,14 @@ function rSelect(){
     <div class="dav" style="background:${d.col}">${d.ini}</div>
     <div class="dname">${d.name}</div>
   </div>`).join('')}
+</div>
+<div style="margin-top:20px;background:var(--sky);border-radius:var(--rs);padding:12px 16px;font-size:13px;color:var(--tm)">
+  <i class="fa-solid fa-coins" style="color:var(--gold);margin-right:6px"></i>
+  Kjørepris: <strong>${PRIS.PER_MIN} kr/min</strong> · Minimum <strong>${PRIS.MIN_PRIS} kr</strong> per tur
 </div>`;
 }
 
-function selectDriver(id){
-  A.driver=DRIVERS.find(d=>d.id===id);
-  go('login');
-}
+function selectDriver(id){ A.driver=DRIVERS.find(d=>d.id===id); go('login'); }
 
 function rLogin(){
   const d=A.driver;
@@ -281,7 +278,7 @@ function rLogin(){
 <div class="lcard">
   <div class="lav" style="background:${d.col}">${d.ini}</div>
   <div class="lname">${d.name}</div>
-  <div class="lsub">Skriv inn passordet ditt for å fortsette</div>
+  <div class="lsub">Skriv inn passordet ditt</div>
   <input type="password" id="pwInp" class="pw-input" placeholder="Passord" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
   <div class="pw-err" id="pwErr"></div>
   <div class="btn-row">
@@ -302,12 +299,7 @@ function doLogin(){
   } else {
     if(err) err.innerHTML='<i class="fa-solid fa-circle-xmark"></i> Feil passord';
     const inp=document.getElementById('pwInp');
-    if(inp){
-      inp.style.borderColor='var(--red)';
-      inp.value='';
-      inp.focus();
-      setTimeout(()=>{inp.style.borderColor='';},1000);
-    }
+    if(inp){ inp.style.borderColor='var(--red)'; inp.value=''; inp.focus(); setTimeout(()=>inp.style.borderColor='',1000); }
   }
 }
 
@@ -322,8 +314,8 @@ function rQueue(){
 </div>
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
   <div>
-    <div style="font-size:18px;font-weight:800">Sjø ${A.sjo} – Kjøreliste</div>
-    <div style="font-size:13px;color:var(--ts)">${q.length} person${q.length!==1?'er':''} · <span style="color:var(--green);font-weight:600"><i class="fa-solid fa-circle" style="font-size:8px"></i> Live</span></div>
+    <div style="font-size:18px;font-weight:800">Sjø ${A.sjo}</div>
+    <div style="font-size:13px;color:var(--ts)">${q.length} person${q.length!==1?'er':''} · <span style="color:var(--green);font-weight:600"><i class="fa-solid fa-circle" style="font-size:8px"></i> Live</span> · ${PRIS.PER_MIN} kr/min</div>
   </div>
 </div>
 ${q.length===0
@@ -332,35 +324,37 @@ ${q.length===0
 <div class="qitem" onclick="confirmStart('${r._key}',${i})">
   <div class="qnum${i===0?' first':''}">${i+1}</div>
   <div style="flex:1">
-    <div class="qn">${r.name}</div>
-    <div class="qm">${discPill(r.disc)}<span style="margin-left:6px">${r.addedAt||''}</span></div>
+    <div style="font-size:15px;font-weight:700">${r.name}</div>
+    <div style="font-size:12px;color:var(--ts);margin-top:4px;display:flex;align-items:center;gap:8px">${discPill(r.disc)}<span>${r.addedAt||''}</span></div>
   </div>
   <i class="fa-solid fa-play" style="color:var(--blue);font-size:18px"></i>
 </div>`).join('')}
-<div style="margin-top:20px;background:var(--sky);border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--tm)">
+<div style="margin-top:18px;background:var(--sky);border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--tm)">
   <i class="fa-solid fa-circle-info" style="color:var(--blue);margin-right:6px"></i>
-  Trykk på en person for å starte turen.
+  Trykk på en person for å starte turen. Pris: <strong>${PRIS.PER_MIN} kr/min</strong>
 </div>`;
 }
 
 function switchSjo(n){ A.sjo=n; bRender(); }
 
 function confirmStart(key,idx){
-  const q=A.queues[A.sjo]||[];
-  const r=q.find(x=>x._key===key);
+  const r=(A.queues[A.sjo]||[]).find(x=>x._key===key);
   if(!r) return;
   A.confirmR={...r,_key:key,_idx:idx};
-  const m=document.createElement('div');
-  m.className='modal-bg'; m.id='_modal';
   const col={Slalom:'var(--blue)',Trick:'var(--pur)',Hopp:'var(--gold)',Wakeboard:'var(--aqua)'}[r.disc]||'var(--tm)';
+  const m=document.createElement('div'); m.className='modal-bg'; m.id='_modal';
   m.innerHTML=`<div class="modal">
     <div style="font-size:18px;font-weight:800;margin-bottom:6px">Start tur?</div>
-    <div style="font-size:13.5px;color:var(--ts);margin-bottom:16px">Bekreft at du starter turen til:</div>
+    <div style="font-size:13px;color:var(--ts);margin-bottom:14px">Bekreft at du starter turen til:</div>
     <div class="rider-box">
       <div style="width:44px;height:44px;border-radius:12px;background:${col};display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex-shrink:0"><i class="fa-solid fa-person-skiing-nordic"></i></div>
       <div><div style="font-size:16px;font-weight:800">${r.name}</div><div style="font-size:13px;color:var(--ts)">${r.disc} · Sjø ${A.sjo}</div></div>
     </div>
-    <div class="btn-row" style="display:flex;gap:10px">
+    <div style="font-size:12.5px;color:var(--ts);background:var(--sky);border-radius:var(--rs);padding:10px;margin-bottom:16px;text-align:center">
+      <i class="fa-solid fa-coins" style="color:var(--gold);margin-right:5px"></i>
+      Pris: <strong>${PRIS.PER_MIN} kr/min</strong> · Min <strong>${PRIS.MIN_PRIS} kr</strong>
+    </div>
+    <div class="btn-row">
       <button class="btn bo" onclick="closeModal()"><i class="fa-solid fa-xmark"></i> Avbryt</button>
       <button class="btn bg" onclick="startTrip()"><i class="fa-solid fa-play"></i> Start nå</button>
     </div>
@@ -373,57 +367,54 @@ function closeModal(){ document.getElementById('_modal')?.remove(); }
 function startTrip(){
   closeModal();
   clearInterval(A.timerInt);
-  const r=A.confirmR;
-  A.rider = r;
-  A.riderKey = r._key;
-  A.tripStart = Date.now();
-  A.paused = false;
-  A.pauseStart = null;
-  A.pausedMs = 0;
-  A.elapsedMs = 0;
-  A.showEnd = false;
+  A.rider={...A.confirmR}; A.riderKey=A.confirmR._key;
+  A.tripStart=Date.now(); A.paused=false; A.pauseStart=null;
+  A.pausedMs=0; A.elapsedMs=0; A.showEnd=false;
   go('trip');
 }
 
 function rTrip(){
   const r=A.rider;
-  const fmt=(ms)=>{const s=Math.floor(ms/1000),m=Math.floor(s/60),sec=s%60;return`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;};
+  const fmtTime=(ms)=>{const s=Math.floor(ms/1000),m=Math.floor(s/60),sec=s%60;return`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;};
   const ini=r.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const currentPris=calcPris(A.elapsedMs);
   return`
 <div class="trip-card">
   <div class="trip-av">${ini}</div>
-  <div class="trip-name">${r.name}</div>
-  <div class="trip-meta">
-    ${discPill(r.disc)}
-    <span style="color:var(--ts)">·</span>
-    <span>Sjø ${A.sjo}</span>
+  <div style="font-size:20px;font-weight:800;margin-bottom:4px">${r.name}</div>
+  <div style="font-size:14px;color:var(--ts);margin-bottom:22px;display:flex;justify-content:center;align-items:center;gap:8px">
+    ${discPill(r.disc)} <span style="color:var(--ts)">·</span> <span>Sjø ${A.sjo}</span>
   </div>
 
-  <div class="timer ${A.paused?'pause':'run'}" id="timerDisp">${fmt(A.elapsedMs)}</div>
+  <div class="timer ${A.paused?'pause':'run'}" id="timerDisp">${fmtTime(A.elapsedMs)}</div>
+
   <div class="timer-state" id="timerState">
-    ${A.paused
-      ?'<span class="pdot"></span><span style="color:var(--gold)">PAUSET</span>'
-      :'<span class="pulse"></span><span style="color:var(--green)">KJØRER</span>'}
+    ${A.paused?'<span class="pdot"></span><span style="color:var(--gold)">PAUSET</span>':'<span class="pulse"></span><span style="color:var(--green)">KJØRER</span>'}
   </div>
+
+  <!-- Live pris -->
+  <div class="live-pris" id="livePris">≈ ${currentPris} kr</div>
 
   <div class="trip-btns">
     ${A.paused
       ?`<button class="btn bg" onclick="resumeTrip()"><i class="fa-solid fa-play"></i> Fortsett</button>`
       :`<button class="btn bgold" onclick="pauseTrip()"><i class="fa-solid fa-pause"></i> Pause</button>`}
-    <button class="btn br" onclick="toggleEnd()"><i class="fa-solid fa-stop"></i> Avslutt tur</button>
+    <button class="btn br" onclick="toggleEnd()"><i class="fa-solid fa-stop"></i> Avslutt</button>
   </div>
 
   <div class="chips">
     <div class="chip"><i class="fa-solid fa-user-tie" style="color:var(--blue)"></i>${A.driver.name.split(' ')[0]}</div>
+    <div class="chip"><i class="fa-solid fa-coins" style="color:var(--gold)"></i>${PRIS.PER_MIN} kr/min</div>
     <div class="chip"><i class="fa-regular fa-clock" style="color:var(--ts)"></i>Start: ${new Date(A.tripStart).toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit'})}</div>
   </div>
 
   ${A.showEnd?`
   <div class="end-confirm">
-    <p><i class="fa-solid fa-triangle-exclamation" style="color:var(--red);margin-right:5px"></i>Er du sikker på at turen skal avsluttes?</p>
-    <div class="btn-row">
+    <p><i class="fa-solid fa-triangle-exclamation" style="color:var(--red);margin-right:5px"></i>
+    Avslutt turen? Pris blir <strong>${currentPris} kr</strong></p>
+    <div class="brow">
       <button class="btn bo" onclick="toggleEnd()">Nei, fortsett</button>
-      <button class="btn br" onclick="endTrip()"><i class="fa-solid fa-flag-checkered"></i> Ja, avslutt</button>
+      <button class="btn br" onclick="endTrip()"><i class="fa-solid fa-flag-checkered"></i> Avslutt</button>
     </div>
   </div>`:''}
 </div>`;
@@ -434,18 +425,17 @@ function startTimer(){
   if(A.step!=='trip') return;
   A.timerInt=setInterval(()=>{
     if(!A.paused) A.elapsedMs=Date.now()-A.tripStart-A.pausedMs;
+    // Update timer display
     const d=document.getElementById('timerDisp');
     const st=document.getElementById('timerState');
+    const lp=document.getElementById('livePris');
     if(d){
       const ms=A.elapsedMs,s=Math.floor(ms/1000),m=Math.floor(s/60),sec=s%60;
       d.textContent=`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
       d.className='timer '+(A.paused?'pause':'run');
     }
-    if(st){
-      st.innerHTML=A.paused
-        ?'<span class="pdot"></span><span style="color:var(--gold)">PAUSET</span>'
-        :'<span class="pulse"></span><span style="color:var(--green)">KJØRER</span>';
-    }
+    if(st) st.innerHTML=A.paused?'<span class="pdot"></span><span style="color:var(--gold)">PAUSET</span>':'<span class="pulse"></span><span style="color:var(--green)">KJØRER</span>';
+    if(lp) lp.textContent=`≈ ${calcPris(A.elapsedMs)} kr`;
   },500);
 }
 
@@ -456,55 +446,52 @@ function toggleEnd(){ A.showEnd=!A.showEnd; bRender(); startTimer(); }
 async function endTrip(){
   clearInterval(A.timerInt);
   const dur=A.elapsedMs;
+  const pris=calcPris(dur);
   const r=A.rider;
 
-  // 1. Remove rider from Firebase queue
+  // 1. Fjern fra kø
   db.ref(`queue/${A.sjo}/${A.riderKey}`).remove();
 
-  // 2. Update rider's inQueue flag in their user record
-  db.ref('users').orderByChild('email').once('value', snap=>{
-    if(!snap.exists()) return;
-    snap.forEach(child=>{
-      if(child.val().name===r.name){
-        child.ref.update({[`inQueue/${A.sjo}`]:false});
-        // 3. Deduct 110 kr from rider balance
-        const curBal=child.val().balance||0;
-        const newBal=Math.max(0,curBal-110);
-        const curTrips=child.val().trips||{};
-        const yr='2026';
-        const discKey=(r.disc||'annet').toLowerCase();
-        const curCount=(curTrips[yr]||{})[discKey]||0;
-        const curSpent=child.val().spent||0;
-        const tx={date:new Date().toLocaleDateString('no-NO'),desc:`${r.disc} — Sjø ${A.sjo} (${A.driver.name})`,amt:-110,bal:newBal,fromBoat:true};
-        const txArr=[tx,...(child.val().transactions||[])].slice(0,100);
-        child.ref.update({
-          balance:newBal,
-          spent:(curSpent+110),
-          [`trips/${yr}/${discKey}`]:curCount+1,
-          transactions:txArr
-        });
-      }
-    });
-  });
+  // 2. Trekk pris fra brukerens saldo (søk etter userId)
+  if(r.userId){
+    const userRef=db.ref('users/'+r.userId);
+    const snap=await userRef.once('value');
+    if(snap.exists()){
+      const u=snap.val();
+      const curBal=u.balance||0;
+      const newBal=Math.max(0,curBal-pris);
+      const discKey=(r.disc||'annet').toLowerCase();
+      const yr='2026';
+      const curCount=((u.trips||{})[yr]||{})[discKey]||0;
+      const tx={date:new Date().toLocaleDateString('no-NO'),desc:`${r.disc} — Sjø ${A.sjo} (${A.driver.name}) · ${Math.round(dur/60000*10)/10} min`,amt:-pris,bal:newBal,fromBoat:true,pris};
+      await userRef.update({
+        balance:newBal,
+        spent:(u.spent||0)+pris,
+        [`trips/${yr}/${discKey}`]:curCount+1,
+        [`inQueue/${A.sjo}`]:false,
+        transactions:[tx,...(u.transactions||[])].slice(0,100)
+      });
+    }
+  }
 
-  // 4. Save completed trip to Firebase
+  // 3. Lagre fullført tur
   db.ref('completedTrips').push({
-    userId: r.userId||null,
-    name:   r.name,
-    disc:   r.disc,
-    sjø:    A.sjo,
-    driver: A.driver.name,
+    userId:   r.userId||null,
+    name:     r.name,
+    disc:     r.disc,
+    sjø:      A.sjo,
+    driver:   A.driver.name,
     durationMs: dur,
-    date:   new Date().toLocaleDateString('no-NO'),
-    time:   new Date().toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit'}),
+    pris,
+    date:     new Date().toLocaleDateString('no-NO'),
+    time:     new Date().toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit'}),
     createdAt: firebase.database.ServerValue.TIMESTAMP
   });
 
-  A.lastRider={...r};
-  A.lastDurMs=dur;
+  A.lastRider={...r}; A.lastDurMs=dur; A.lastPris=pris;
   A.rider=null;
   go('done');
-  toast('✅ Tur registrert!','ok',4000);
+  toast(`✅ Tur registrert! ${pris} kr trukket`,'ok',4000);
 }
 
 function rDone(){
@@ -515,9 +502,10 @@ function rDone(){
   <div class="done-circle"><i class="fa-solid fa-flag-checkered"></i></div>
   <div style="font-size:22px;font-weight:800;margin-bottom:6px">Tur avsluttet!</div>
   <div style="font-size:15px;color:var(--ts);margin-bottom:4px">${r?.name||''}</div>
-  <div style="font-size:13px;color:var(--ts);margin-bottom:26px">${r?.disc||''} · Sjø ${A.sjo}</div>
+  <div style="font-size:13px;color:var(--ts);margin-bottom:24px">${r?.disc||''} · Sjø ${A.sjo}</div>
   <div style="font-size:52px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--nm);margin-bottom:6px">${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}</div>
-  <div style="font-size:14px;color:var(--ts);margin-bottom:30px">Varighet · 110 kr trukket</div>
+  <div style="font-size:14px;color:var(--ts);margin-bottom:6px">Varighet</div>
+  <div style="font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--red);margin-bottom:26px">${A.lastPris} kr</div>
   <button class="btn bp" style="font-size:16px;padding:14px 30px;flex:none" onclick="go('queue')">
     <i class="fa-solid fa-list-ol"></i> Tilbake til køen
   </button>
@@ -526,21 +514,15 @@ function rDone(){
 
 function tryLogout(){
   if(A.step==='trip'){ toast('Avslutt pågående tur først','err'); return; }
-  if(confirm('Logg ut fra båtkjørerside?')){
-    clearInterval(A.timerInt);
-    if(qListener){ db.ref('queue').off(); }
-    A.driver=null; go('select');
-    toast('Logget ut','info');
-  }
+  if(confirm('Logg ut?')){ clearInterval(A.timerInt); db.ref('queue').off(); A.driver=null; go('select'); toast('Logget ut','info'); }
 }
 
 function toast(msg,type='ok',dur=2800){
   const t=document.getElementById('toast');
   t.textContent=msg; t.className='toast '+type+' show';
-  clearTimeout(t._t); t._t=setTimeout(()=>{ t.className='toast '+type; },dur);
+  clearTimeout(t._t); t._t=setTimeout(()=>t.className='toast '+type,dur);
 }
 
-/* ═══════════════════ INIT ═══════════════════════════════════ */
 bRender();
 </script>
 </body>
