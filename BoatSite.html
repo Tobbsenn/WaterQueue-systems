@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -162,7 +163,7 @@ function calcPris(durationMs){
    ║  FIREBASE CONFIG – må matche svsk_main.html!                ║
    ╚══════════════════════════════════════════════════════════════╝ */
 const FIREBASE_CONFIG = {
-   apiKey:            "AIzaSyD24SH3zwKUWmxxEXlhzuPG9vOoVJ1ymq4",
+  apiKey:            "AIzaSyD24SH3zwKUWmxxEXlhzuPG9vOoVJ1ymq4",
   authDomain:        "waterqueue-6a605.firebaseapp.com",
   databaseURL:       "https://ditt-prosjekt-default-rtdb.europe-west1.firebasedatabase.app",
   projectId:         "waterqueue-6a605",
@@ -172,7 +173,15 @@ const FIREBASE_CONFIG = {
 };
 
 firebase.initializeApp(FIREBASE_CONFIG);
-const db = firebase.database();
+const db   = firebase.database();
+const auth = firebase.auth();
+
+// Anonymt innlogging – lar båtkjørersiden bruke Firebase uten brukerkonto.
+// Aktiver "Anonymous" i Firebase Console → Authentication → Sign-in method
+auth.signInAnonymously().catch(e=>{
+  // Hvis anonymt ikke er aktivert, fortsetter vi uten (testmodus-regler funker)
+  console.warn('Anonym auth ikke aktivert:', e.message);
+});
 
 /* DRIVERS */
 const DRIVERS = [
