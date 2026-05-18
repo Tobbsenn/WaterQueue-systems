@@ -380,8 +380,9 @@ const FIREBASE_CONFIG = {
 };
 
 firebase.initializeApp(FIREBASE_CONFIG);
-const auth = firebase.auth();
-const db   = firebase.database();
+const auth           = firebase.auth();
+const db             = firebase.database();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 /* ═══════════════ INAKTIVITET (10 min) ════════════════════════ */
 const INACTIVE_MS = 10 * 60 * 1000;
