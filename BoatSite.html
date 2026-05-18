@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>SVSK – Båtkjørerside</title>
+<title>Mvsk – Båtkjørerside</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -133,21 +133,21 @@ footer{padding:13px 18px;font-size:11.5px;color:var(--ts);border-top:1px solid v
        onerror="document.getElementById('hLogoImg').style.display='none';document.getElementById('hLogoIcon').style.display='flex'"
        alt="logo">
   <div id="hLogoIcon" class="h-logo-icon"><i class="fa-solid fa-water"></i></div>
-  <div class="h-t"><strong>SVSK</strong><span>Båtkjørerside</span></div>
+  <div class="h-t"><strong>Mvsk</strong><span>Båtkjørerside</span></div>
   <div class="h-right" id="hRight">
-    <a href="svsk_main.html" class="hbtn"><i class="fa-solid fa-arrow-left"></i> Hjem</a>
+    <a href="Mvsk_main.html" class="hbtn"><i class="fa-solid fa-arrow-left"></i> Hjem</a>
   </div>
 </header>
 
 <div class="pg" id="pg"></div>
 <div class="toast" id="toast"></div>
-<footer>SVSK Båtkjørerside · WaterskiQueue v1.0.0</footer>
+<footer>Mvsk Båtkjørerside · WaterQueue systems v1.0.0</footer>
 
 <script>
 /* ╔══════════════════════════════════════════════════════════════╗
-   ║  PRIS PER MINUTT – MÅ MATCHE svsk_main.html!                ║
+   ║  PRIS PER MINUTT – MÅ MATCHE Mvsk_main.html!                ║
    ╠══════════════════════════════════════════════════════════════╣
-   ║  Endre her OG i svsk_main.html for å justere prisen         ║
+   ║  Endre her OG i Mvsk_main.html for å justere prisen         ║
    ╚══════════════════════════════════════════════════════════════╝ */
 const PRIS = {
   PER_MIN:  12,   // ← ENDRE HER: kr per minutt
@@ -160,7 +160,7 @@ function calcPris(durationMs){
 }
 
 /* ╔══════════════════════════════════════════════════════════════╗
-   ║  FIREBASE CONFIG – må matche svsk_main.html!                ║
+   ║  FIREBASE CONFIG – må matche Mvsk_main.html!                ║
    ╚══════════════════════════════════════════════════════════════╝ */
 const FIREBASE_CONFIG = {
   apiKey:            "AIzaSyD24SH3zwKUWmxxEXlhzuPG9vOoVJ1ymq4",
@@ -185,9 +185,9 @@ auth.signInAnonymously().catch(e=>{
 
 /* DRIVERS */
 const DRIVERS = [
-  {id:1, name:'Erik Johansson',   ini:'EJ', pw:'erik2026',   col:'#1A73E8'},
-  {id:2, name:'Kari Pedersen',    ini:'KP', pw:'kari2026',   col:'#00C9B1'},
-  {id:3, name:'Lars Nilsen',      ini:'LN', pw:'lars2026',   col:'#F5A623'},
+  {id:1, name:'Tobias S Jacobsen',   ini:'TSJ', pw:'Tobias',   col:'#1A73E8'},
+  {id:2, name:'Thor Arne Jacobsen',    ini:'TAJ', pw:'Thor Arne',   col:'#00C9B1'},
+  {id:3, name:'Prøve bruker.passord er Prøve',      ini:'PR', pw:'Prøve',   col:'#F5A623'},
   {id:4, name:'Per Hansen',       ini:'PH', pw:'per2026',    col:'#7C3AED'},
   {id:5, name:'Marte Dahl',       ini:'MD', pw:'marte2026',  col:'#E8445A'},
   {id:6, name:'Tobias Jacobsen',  ini:'TJ', pw:'tobias2026', col:'#1EC87A'},
@@ -250,7 +250,7 @@ function updateHdr(){
       <i class="fa-solid fa-right-from-bracket" style="font-size:11px;color:rgba(255,255,255,.5);margin-left:2px"></i>
     </div>`;
   } else {
-    r.innerHTML=`<a href="svsk_main.html" class="hbtn"><i class="fa-solid fa-arrow-left"></i> Hjem</a>`;
+    r.innerHTML=`<a href="Mvsk_main.html" class="hbtn"><i class="fa-solid fa-arrow-left"></i> Hjem</a>`;
   }
 }
 
