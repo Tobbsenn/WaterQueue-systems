@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>SVSK – Dashboard</title>
+<title>MVSK – Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -240,11 +240,11 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
       <img id="authLogoImg" class="auth-logo-img"
            src="logo.png"
            onerror="document.getElementById('authLogoImg').style.display='none';document.getElementById('authLogoIcon').style.display='flex'"
-           alt="SVSK logo">
+           alt="MVSK logo">
       <div id="authLogoIcon" class="auth-logo-icon" style="display:none"><i class="fa-solid fa-water"></i></div>
     </div>
 
-    <div class="auth-title">Slåstad Vannskiklubb</div>
+    <div class="auth-title">Moelv Vannskiklubb</div>
     <div class="auth-sub">Logg inn eller registrer deg med Google</div>
 
     <div class="auth-err" id="err-login" style="margin-bottom:16px"><i class="fa-solid fa-circle-xmark"></i><span id="err-login-txt"></span></div>
@@ -282,7 +282,7 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
          onerror="document.getElementById('sbLogoImg').style.display='none';document.getElementById('sbLogoIcon').style.display='flex'"
          alt="logo">
     <div id="sbLogoIcon" class="sb-logo-icon"><i class="fa-solid fa-water"></i></div>
-    <div><strong>Slåstad VS</strong><span>Vannskiklubb</span></div>
+    <div><strong>Moelv VS</strong><span>Vannskiklubb</span></div>
   </div>
   <div class="sb-user">
     <div class="sb-av" id="sbAv">?</div>
@@ -306,7 +306,7 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
     <div class="na" onclick="go('konto')"     id="nav-konto"><i class="fa-regular fa-user"></i> Din kontoside</div>
     <div class="na" onclick="go('stripe')"    id="nav-stripe"><i class="fa-solid fa-coins"></i> Overfør penger</div>
     <div class="ndiv"></div>
-    <div class="na boat" onclick="window.open('svsk_batkjorer.html','_blank')">
+    <div class="na boat" onclick="window.open('MVSK_batkjorer.html','_blank')">
       <i class="fa-solid fa-ship"></i> Båtkjørerside <span class="nb g">LIVE</span>
     </div>
     <div class="ndiv"></div>
@@ -325,7 +325,7 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
       </div>
     </div>
   </nav>
-  <div class="sb-foot"><span>WaterskiQueue</span><span>v1.0.0</span></div>
+  <div class="sb-foot"><span>WaterQueue systems</span><span>v1.0.0</span></div>
 </aside>
 <div class="sb-ov" id="sbOv" onclick="closeSb()"></div>
 
@@ -337,13 +337,13 @@ footer{padding:15px 24px;font-size:11.5px;color:var(--ts);border-top:1px solid v
     <div class="qpill" onclick="go('kjoreliste',{sjo:2})"><span class="qdot" id="dot2"></span><span id="pt2">Sjø 2 · 0</span></div>
     <div class="qpill" onclick="go('kjoreliste',{sjo:3})"><span class="qdot" id="dot3"></span><span id="pt3">Sjø 3 · 0</span></div>
     <div class="topr">
-      <div class="tbi aqua" onclick="window.open('svsk_batkjorer.html','_blank')" title="Båtkjørerside"><i class="fa-solid fa-ship"></i></div>
+      <div class="tbi aqua" onclick="window.open('MVSK_batkjorer.html','_blank')" title="Båtkjørerside"><i class="fa-solid fa-ship"></i></div>
       <div class="tbi" onclick="go('stripe')" title="Fyll på konto"><i class="fa-solid fa-coins"></i></div>
       <div class="tbi" onclick="go('konto')"  title="Min konto"><i class="fa-regular fa-circle-user"></i></div>
     </div>
   </header>
   <div class="cnt" id="app"></div>
-  <footer>Copyright © 2004–2026 <strong>WaterskiQueue / Slåstad Vannskiklubb</strong></footer>
+  <footer>Copyright © 2004–2026 <strong>WaterQueue systems / Moelv Vannskiklubb</strong></footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -660,7 +660,7 @@ function pgDash(){
 <div class="ph"><h1>God dag, ${(udata.name||me.email).split(' ')[0]} 👋</h1>
 <p>Her er oversikten din · Live på alle enheter · <strong style="color:var(--blue)">${PRIS.PER_MIN} kr/min</strong></p></div>
 ${inQ.length?`<div style="background:rgba(0,201,177,.1);border:1.5px solid var(--aqua);border-radius:var(--r);padding:12px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;font-size:13.5px"><i class="fa-solid fa-person-swimming" style="color:var(--aqua);font-size:20px"></i><span>Du er på køen: ${inQ.map(n=>'<strong>Sjø '+n+'</strong>').join(', ')} – God tur! 🌊</span></div>`:''}
-<div class="banner" onclick="window.open('svsk_batkjorer.html','_blank')">
+<div class="banner" onclick="window.open('MVSK_batkjorer.html','_blank')">
   <i class="fa-solid fa-ship"></i>
   <div><h3>Båtkjørerside</h3><p>Live-timer, køstyring og prisbregning per minutt</p></div>
   <i class="fa-solid fa-arrow-right arr"></i>
@@ -720,7 +720,7 @@ ${inQ.length?`<div style="background:rgba(0,201,177,.1);border:1.5px solid var(-
     <div class="qlk" onclick="go('kjoreliste-velg')"><i class="fa-solid fa-list-ol"></i>Kjørelistene<i class="fa-solid fa-arrow-right arr"></i></div>
     <div class="qlk" onclick="go('stripe')"><i class="fa-solid fa-coins"></i>Fyll på konto<i class="fa-solid fa-arrow-right arr"></i></div>
     <div class="qlk" onclick="go('aktivitet')"><i class="fa-solid fa-bolt"></i>Din aktivitet<i class="fa-solid fa-arrow-right arr"></i></div>
-    <div class="qlk" onclick="window.open('svsk_batkjorer.html','_blank')" style="border-color:rgba(0,201,177,.3);color:var(--aqua)"><i class="fa-solid fa-ship"></i>Båtkjørerside<i class="fa-solid fa-arrow-right arr"></i></div>
+    <div class="qlk" onclick="window.open('MVSK_batkjorer.html','_blank')" style="border-color:rgba(0,201,177,.3);color:var(--aqua)"><i class="fa-solid fa-ship"></i>Båtkjørerside<i class="fa-solid fa-arrow-right arr"></i></div>
     <div class="qlk" onclick="window.open('https://tobbsenn.github.io/Waterskiboat-Skandinavia','_blank')"><i class="fa-solid fa-sailboat"></i>SkiVaro – Båtmarked<i class="fa-solid fa-arrow-right arr"></i></div>
     <div class="qlk" onclick="window.open('https://tobbsenn.github.io/SpinLog','_blank')"><i class="fa-solid fa-rotate"></i>SpinLog – Trick-tracker<i class="fa-solid fa-arrow-right arr"></i></div>
   </div>
